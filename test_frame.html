@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="blockly_compressed.js"></script>
+    <script type="text/javascript" src="test_blocks.js"></script>
+    <style>
+      html, body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+      }
+      .blocklySvg {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    
+    <script>
+      function init() {
+        Blockly.inject(document.body,
+            {trashcan: true, toolbox: document.getElementById('bug_toolbox')});
+        // Let the top-level application know that Blockly is ready.
+        window.parent.blocklyLoaded(Blockly);
+      }
+    </script>
+  </head>
+  <body onload="init()">
+  
+    <xml id="bug_toolbox" style="display: none">
+    <block type="green_block"></block>
+    <block type="blue_block"></block>
+    <block type="purple_block"></block>
+    </xml>
+    
+  </body>
+</html>
