@@ -148,7 +148,7 @@ Blockly.Blocks['template'] = {
 };
 
 
-Blockly.Blocks['spacer'] = {
+Blockly.Blocks['extra_semaphore'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
     this.setColour(330);
