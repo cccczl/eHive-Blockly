@@ -26,12 +26,13 @@
             {trashcan: true, toolbox: document.getElementById('hive_toolbox')});
         // Let the top-level application know that Blockly is ready.
         window.parent.blocklyLoaded(Blockly);
+        Blockly.addChangeListener(updateXMLarea);
       }
     </script>
   </head>
   <body onload="init()">
   
-  <p>Export this pipeline as <a href="#" onclick="downloadXml()">XML</a></p>
+  <p>Export this pipeline as <a href="#" onclick="downloadXml()">XML</a> (may not work in some browsers)</p>
 
     <xml id="hive_toolbox" style="display: none">
     <block type="pipeline"></block>
@@ -39,13 +40,14 @@
     <block type="named_analysis"></block>
     <block type="table"></block>
     <block type="accu"></block>
-<!--    <block type="straight_dataflow"></block>-->
     <block type="dataflow_rule"></block>
     <block type="semaphored_dataflow"></block>
     <block type="template"></block>
     <block type="spacer"></block>
     </xml>
     
+  <br/>
+  <textarea id=xml_area readonly=readonly style="height: 200px; width: 100%"></textarea><br/>
      
     <script>
 
@@ -56,8 +58,11 @@
       saveAs(blob, "pipeline.xml");
 
     }
+    function updateXMLarea() {
+        document.getElementById('xml_area').value = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(Blockly.mainWorkspace));
+    }
 
-  </script>
+    </script>
   
     
   </body>
