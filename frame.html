@@ -47,7 +47,8 @@
     </xml>
     
   <br/>
-  <textarea id=xml_area readonly=readonly style="height: 200px; width: 100%"></textarea><br/>
+  <textarea id=xml_area style="height: 200px; width: 100%"></textarea><br/>
+  <button onclick='interpretXMLarea()'>interpret XML from the textarea above</button>
      
     <script>
 
@@ -60,6 +61,12 @@
     }
     function updateXMLarea() {
         document.getElementById('xml_area').value = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(Blockly.mainWorkspace));
+    }
+    function interpretXMLarea() {
+        var xmlText = document.getElementById("xml_area").value;
+        var dom = Blockly.Xml.textToDom( xmlText );
+        Blockly.mainWorkspace.clear();
+        Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
     }
 
     </script>
