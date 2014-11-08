@@ -36,7 +36,7 @@ Blockly.Blocks['analysis'] = {
         .appendField("[parameters] →");
 
     this.appendValueInput("dataflows")
-        .setCheck(["conn_dataflow_rule"])
+        .setCheck(["conn_dataflow_rule", "conn_next_semaphore_adaptor"])
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[dataflows] →");
 
