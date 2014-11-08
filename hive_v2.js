@@ -31,9 +31,10 @@ Blockly.Blocks['analysis'] = {
         .appendField("Parameters")
         .appendField(new Blockly.FieldTextInput("{}"), "parameters");
     this.appendDummyInput()
-        .appendField(" ↓")
+        .appendField(" ↓");
     this.setPreviousStatement(true, ["conn_between_analysis", "conn_X_2_analysis", "conn_from_dataflow"]);
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
+    this.setInputsInline(false);
   }
 };
 
@@ -100,6 +101,7 @@ Blockly.Blocks['dataflow_rule'] = {
         .appendField(new Blockly.FieldTextInput("2"), "branch_number");
     this.setOutput(true, ["conn_dataflow_rule", "conn_next_semaphore_adaptor"]);
     this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow", "templated_dataflow"]);
+    this.setInputsInline(false);
   }
 };
 
@@ -121,6 +123,7 @@ Blockly.Blocks['semaphored_dataflow'] = {
         .appendField(new Blockly.FieldTextInput("1"), "BRANCH");
     this.setPreviousStatement(true, ["conn_analysis_2_semaphore", "conn_from_semaphore_adaptor"]);
     this.setNextStatement(true, ["conn_X_2_analysis"]);
+    this.setInputsInline(false);
   }
 };
 
@@ -146,6 +149,7 @@ Blockly.Blocks['extra_semaphore'] = {
         .appendField(new Blockly.FieldTextInput("1"), "BRANCH");
     this.setOutput(true, ["conn_next_semaphore_adaptor"]);
     this.setNextStatement(true, ["conn_X_2_analysis"]);
+    this.setInputsInline(false);
   }
 };
 
