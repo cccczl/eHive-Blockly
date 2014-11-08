@@ -6,9 +6,12 @@ Blockly.Blocks['pipeline'] = {
         .appendField("Pipeline name")
         .appendField(new Blockly.FieldTextInput(""), "pipeline_name");
     this.appendDummyInput()
-        .appendField("Parameters")
-        .appendField(new Blockly.FieldTextInput("{}"), "parameters");
-    this.appendStatementInput("first_analysis")
+        .appendField("Parameters ↘");
+    this.appendStatementInput("pipeline_wide_parameters")
+        .setCheck(["conn_kv_pair"]);
+    this.appendDummyInput()
+        .appendField("Analyses ↘");
+    this.appendStatementInput("pipeline_analyses")
         .setCheck(["conn_X_2_analysis"]);
   }
 };
@@ -28,8 +31,9 @@ Blockly.Blocks['analysis'] = {
         .appendField("Module")
         .appendField(new Blockly.FieldTextInput("Hive::RunnableDB::SystemCmd"), "module");
     this.appendDummyInput()
-        .appendField("Parameters")
-        .appendField(new Blockly.FieldTextInput("{}"), "parameters");
+        .appendField("Parameters ↘");
+    this.appendStatementInput("analysis_parameters")
+        .setCheck(["conn_kv_pair"]);
     this.appendDummyInput()
         .appendField(" ↓");
     this.setPreviousStatement(true, ["conn_between_analysis", "conn_X_2_analysis", "conn_from_dataflow"]);
@@ -89,6 +93,7 @@ Blockly.Blocks['table'] = {
 Blockly.Blocks['dataflow_rule'] = {
   init: function() {
     this.setColour(260);
+    this.setOutput(true, ["conn_dataflow_rule", "conn_next_semaphore_adaptor"]);
     this.appendValueInput("extra_dataflows")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("more →")
@@ -97,10 +102,15 @@ Blockly.Blocks['dataflow_rule'] = {
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Dataflow");
     this.appendDummyInput()
-        .appendField(" ⇊  branch #")
+        .appendField(" ⏐ branch #")
         .appendField(new Blockly.FieldTextInput("2"), "branch_number");
-    this.setOutput(true, ["conn_dataflow_rule", "conn_next_semaphore_adaptor"]);
-    this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow", "templated_dataflow"]);
+    this.appendDummyInput()
+        .appendField(" ⏐    template ↘");
+    this.appendStatementInput("TEMPLATE")
+        .setCheck(["conn_kv_pair"]);
+    this.appendDummyInput()
+        .appendField(" ⇊ ");
+    this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow"]);
     this.setInputsInline(false);
   }
 };
@@ -119,8 +129,14 @@ Blockly.Blocks['semaphored_dataflow'] = {
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Funnel");
     this.appendDummyInput()
-        .appendField(" ↓  branch #")
-        .appendField(new Blockly.FieldTextInput("1"), "BRANCH");
+        .appendField(" ⏐ branch #")
+        .appendField(new Blockly.FieldTextInput("1"), "funnel_branch_number");
+    this.appendDummyInput()
+        .appendField(" ⏐    template ↘");
+    this.appendStatementInput("TEMPLATE")
+        .setCheck(["conn_kv_pair"]);
+    this.appendDummyInput()
+        .appendField(" ↓ ");
     this.setPreviousStatement(true, ["conn_analysis_2_semaphore", "conn_from_semaphore_adaptor"]);
     this.setNextStatement(true, ["conn_X_2_analysis"]);
     this.setInputsInline(false);
@@ -145,8 +161,14 @@ Blockly.Blocks['extra_semaphore'] = {
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Funnel");
     this.appendDummyInput()
-        .appendField(" ↓  branch #")
-        .appendField(new Blockly.FieldTextInput("1"), "BRANCH");
+        .appendField(" ⏐ branch #")
+        .appendField(new Blockly.FieldTextInput("1"), "funnel_branch_number");
+    this.appendDummyInput()
+        .appendField(" ⏐    template ↘");
+    this.appendStatementInput("TEMPLATE")
+        .setCheck(["conn_kv_pair"]);
+    this.appendDummyInput()
+        .appendField(" ↓ ");
     this.setOutput(true, ["conn_next_semaphore_adaptor"]);
     this.setNextStatement(true, ["conn_X_2_analysis"]);
     this.setInputsInline(false);
@@ -154,13 +176,15 @@ Blockly.Blocks['extra_semaphore'] = {
 };
 
 
-Blockly.Blocks['template'] = {
+Blockly.Blocks['key_value_pair'] = {
   init: function() {
-    this.setColour(65);
+    this.setColour(10);
     this.appendDummyInput()
-        .appendField("template")
-        .appendField(new Blockly.FieldTextInput(""), "NAME");
-    this.setPreviousStatement(true, ["conn_analysis_2_X", "templated_dataflow"]);
-    this.setNextStatement(true, ["conn_X_2_analysis", "conn_from_dataflow", "conn_from_semaphore_adaptor"]);
+        .appendField(new Blockly.FieldTextInput("(key)"), "KEY")
+        .appendField("⇒")
+        .appendField(new Blockly.FieldTextInput("(value)"), "VALUE");
+    this.setPreviousStatement(true, ["conn_kv_pair"]);
+    this.setNextStatement(true, ["conn_kv_pair"]);
   }
 };
+
