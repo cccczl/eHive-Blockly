@@ -8,6 +8,7 @@
     <script type="text/javascript" src="Blob.js"></script>
     <script type="text/javascript" src="FileSaver.js"></script>
     <script type="text/javascript" src="msg/js/en.js"></script>
+    <script type="text/javascript" src="drag.js"></script>
   <style>
     body {
       background-color: #fff;
@@ -82,7 +83,7 @@
 	Blockly.inject(document.getElementById('blocklyDiv'), {
 		toolbox: document.getElementById('hive_toolbox'), // mandatory
 		sound: false,
-		collapse: true, comments: true, disable: true, scrollbars: true, trashcan: true // those ones are only true when there are categories
+		collapse: true, comments: true, disable: false, scrollbars: true, trashcan: true // those ones are automatically true when there are categories
 	});
 
 	var text = '<xml xmlns="http://www.w3.org/1999/xhtml"> <block type="pipeline" x="50" y="50"> <field name="pipeline_name"></field> </block> </xml>';
