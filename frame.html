@@ -25,8 +25,11 @@
     
     <script>
       function init() {
-        Blockly.inject(document.body,
-            {trashcan: true, toolbox: document.getElementById('hive_toolbox')});
+	      Blockly.inject(document.body, {
+			      toolbox: document.getElementById('hive_toolbox'), // mandatory
+			      sound: false,
+			      collapse: true, comments: true, disable: true, trashcan: true // those ones are only true when there are categories
+			      });
         // Let the top-level application know that Blockly is ready.
         window.parent.blocklyLoaded(Blockly);
         Blockly.addChangeListener(updateXMLarea);
