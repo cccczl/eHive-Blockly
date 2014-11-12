@@ -13,6 +13,7 @@ Blockly.Blocks['pipeline'] = {
         .appendField("analyses:");
     this.appendStatementInput("pipeline_analyses")
         .setCheck(["conn_X_2_analysis"]);
+    this.setDeletable(false);
   }
 };
 

@@ -26,9 +26,6 @@
   <p>Export this pipeline as <a href="#" onclick="downloadXml()">XML</a> (may not work in some browsers)</p>
 
     <xml id="hive_toolbox" style="display: none">
-    <category name="Pipeline">
-    <block type="pipeline"></block>
-    </category>
     <category name="Analyses">
     <block type="analysis"></block>
     <block type="named_analysis"></block>
@@ -64,6 +61,10 @@
     }
     function interpretXMLarea() {
         var xmlText = document.getElementById("xml_area").value;
+	loadXMLIntoBlockly(xmlText);
+    }
+
+    function loadXMLIntoBlockly(xmlText) {
         var dom = Blockly.Xml.textToDom( xmlText );
         Blockly.mainWorkspace.clear();
         Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
@@ -83,6 +84,9 @@
 		sound: false,
 		collapse: true, comments: true, disable: true, scrollbars: true, trashcan: true // those ones are only true when there are categories
 	});
+
+	var text = '<xml xmlns="http://www.w3.org/1999/xhtml"> <block type="pipeline" x="50" y="50"> <field name="pipeline_name"></field> </block> </xml>';
+	loadXMLIntoBlockly(text);
         Blockly.addChangeListener(updateXMLarea);
   </script>
 
