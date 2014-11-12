@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <script type="text/javascript" src="blockly_compressed.js"></script>
+    <script type="text/javascript" src="javascript_compressed.js"></script>
     <script type="text/javascript" src="hive_v2.js"></script>
+    <script type="text/javascript" src="ehive_codegen.js"></script>
     <script type="text/javascript" src="Blob.js"></script>
     <script type="text/javascript" src="FileSaver.js"></script>
     <style>
@@ -27,6 +29,7 @@
         // Let the top-level application know that Blockly is ready.
         window.parent.blocklyLoaded(Blockly);
         Blockly.addChangeListener(updateXMLarea);
+        Blockly.addChangeListener(updateJSarea);
       }
     </script>
   </head>
@@ -48,7 +51,7 @@
     </xml>
     
   <br/>
-  <textarea id=xml_area style="height: 200px; width: 100%"></textarea><br/>
+  <textarea id=xml_area style="height: 200px; width: 45%"></textarea><textarea id=js_area style="height: 200px; width: 45%"></textarea><br/>
   <button onclick='interpretXMLarea()'>interpret XML from the textarea above</button>
      
     <script>
@@ -68,6 +71,9 @@
         var dom = Blockly.Xml.textToDom( xmlText );
         Blockly.mainWorkspace.clear();
         Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+    }
+    function updateJSarea() {
+        document.getElementById('js_area').value = Blockly.JavaScript.workspaceToCode(Blockly.mainWorkspace);
     }
 
     </script>
