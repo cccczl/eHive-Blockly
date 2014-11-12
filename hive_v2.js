@@ -17,6 +17,40 @@ Blockly.Blocks['pipeline'] = {
 };
 
 
+Blockly.Blocks['dictionary'] = {
+  init: function() {
+    this.setColour(20);
+    this.setOutput(true, ["conn_dictionary"]);
+
+    this.appendDummyInput()
+        .appendField(" { ");
+
+    this.appendStatementInput("dictionary_pairs")
+        .setCheck(["conn_kv_pair"]);
+
+    this.appendDummyInput()
+        .appendField(" } ");
+
+    this.setInputsInline(false);
+  }
+};
+
+
+Blockly.Blocks['key_value_pair'] = {
+  init: function() {
+    this.setColour(20);
+
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput("(key)"), "key")
+        .appendField("⇒")
+        .appendField(new Blockly.FieldTextInput("(value)"), "value");
+
+    this.setPreviousStatement(true, ["conn_kv_pair"]);
+    this.setNextStatement(true, ["conn_kv_pair"]);
+  }
+};
+
+
 Blockly.Blocks['analysis'] = {
   init: function() {
     this.setColour(210);
@@ -191,40 +225,6 @@ Blockly.Blocks['extra_semaphore'] = {
 
     this.setNextStatement(true, ["conn_X_2_analysis"]);
     this.setInputsInline(false);
-  }
-};
-
-
-Blockly.Blocks['dictionary'] = {
-  init: function() {
-    this.setColour(20);
-    this.setOutput(true, ["conn_dictionary"]);
-
-    this.appendDummyInput()
-        .appendField(" { ");
-
-    this.appendStatementInput("dictionary")
-        .setCheck(["conn_kv_pair"]);
-
-    this.appendDummyInput()
-        .appendField(" } ");
-
-    this.setInputsInline(false);
-  }
-};
-
-
-Blockly.Blocks['key_value_pair'] = {
-  init: function() {
-    this.setColour(20);
-
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("(key)"), "key")
-        .appendField("⇒")
-        .appendField(new Blockly.FieldTextInput("(value)"), "value");
-
-    this.setPreviousStatement(true, ["conn_kv_pair"]);
-    this.setNextStatement(true, ["conn_kv_pair"]);
   }
 };
 
