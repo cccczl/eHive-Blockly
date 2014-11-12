@@ -150,9 +150,8 @@ Blockly.Blocks['semaphored_dataflow'] = {
 
     this.appendValueInput("template")
         .setCheck("conn_dictionary")
-        .appendField(" ↓  branch #")
-        .appendField(new Blockly.FieldTextInput("1"), "branch_number")
-        .appendField("        [template] →");
+        .appendField(" ↓  branch #1")
+        .appendField("               [template] →");
 
     this.setPreviousStatement(true, ["conn_analysis_2_semaphore", "conn_from_semaphore_adaptor"]);
     this.setNextStatement(true, ["conn_X_2_analysis"]);
