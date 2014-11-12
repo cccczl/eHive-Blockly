@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>eHive pipeline creation with Blockly</title>
+    <script type="text/javascript" src="blockly_compressed.js"></script>
+    <script type="text/javascript" src="hive_v2.js"></script>
+    <script type="text/javascript" src="Blob.js"></script>
+    <script type="text/javascript" src="FileSaver.js"></script>
+    <script type="text/javascript" src="msg/js/en.js"></script>
+  <style>
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+  </style>
+</head>
+<body>
+
+<h1><a href="http://www.github.com/Ensembl/ensembl-hive">eHive</a> pipeline creation with <a href="https://developers.google.com/blockly/">Blockly</a></h1>
+
+  <p>Export this pipeline as <a href="#" onclick="downloadXml()">XML</a> (may not work in some browsers)</p>
+
+    <xml id="hive_toolbox" style="display: none">
+    <category name="Pipeline">
+    <block type="pipeline"></block>
+    </category>
+    <category name="Analyses">
+    <block type="analysis"></block>
+    <block type="named_analysis"></block>
+    <block type="table"></block>
+    </category>
+    <category name="Dataflows">
+    <block type="dataflow_rule"></block>
+    <block type="semaphored_dataflow"></block>
+    <block type="extra_semaphore"></block>
+    </category>
+    <category name="Parameters">
+    <block type="accu"></block>
+    <block type="dictionary"></block>
+    <block type="key_value_pair"></block>
+    </category>
+    </xml>
+    
+  <br/>
+  <textarea id=xml_area style="height: 200px; width: 99%"></textarea><br/>
+  <button onclick='interpretXMLarea()'>interpret XML from the textarea above</button>
+     
+    <script>
+
+    function downloadXml() {
+      var xmlDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+      var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+      var blob = new Blob([xmlText], {type: "application/xml; charset=utf-8"});
+      saveAs(blob, "pipeline.xml");
+
+    }
+    function updateXMLarea() {
+        document.getElementById('xml_area').value = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(Blockly.mainWorkspace));
+    }
+    function interpretXMLarea() {
+        var xmlText = document.getElementById("xml_area").value;
+        var dom = Blockly.Xml.textToDom( xmlText );
+        Blockly.mainWorkspace.clear();
+        Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+    }
+
+    </script>
+  
+
+  <div id="blocklyDiv" style="height: 800px; width: 99%;"></div>
+
+
+
+
+  <script>
+	Blockly.inject(document.getElementById('blocklyDiv'), {
+		toolbox: document.getElementById('hive_toolbox'), // mandatory
+		sound: false,
+		collapse: true, comments: true, disable: true, scrollbars: true, trashcan: true // those ones are only true when there are categories
+	});
+        Blockly.addChangeListener(updateXMLarea);
+  </script>
+
+</body>
+</html>
