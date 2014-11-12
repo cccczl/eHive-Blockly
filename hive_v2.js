@@ -159,7 +159,7 @@ Blockly.Blocks['dataflow_rule'] = {
     this.appendValueInput("template")
         .setCheck("conn_dictionary")
         .appendField(" ⇊  branch #")
-        .appendField(new Blockly.FieldTextInput("2"), "branch_number")
+        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number")
         .appendField("        [template] →");
 
     this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow"]);
@@ -221,7 +221,7 @@ Blockly.Blocks['extra_semaphore'] = {
     this.appendValueInput("template")
         .setCheck("conn_dictionary")
         .appendField(" ↓  branch #")
-        .appendField(new Blockly.FieldTextInput("1"), "branch_number")
+        .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number")
         .appendField("        [template] →");
 
     this.setNextStatement(true, ["conn_X_2_analysis"]);
