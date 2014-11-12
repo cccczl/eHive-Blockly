@@ -1,11 +1,25 @@
 Blockly.JavaScript['pipeline'] = function(block) {
     var pipeline_name = block.getFieldValue('pipeline_name');
-    var pipeline_wide_parameters = Blockly.JavaScript.valueToCode(block, 'pipeline_wide_parameters', Blockly.JavaScript.ORDER_NONE) || 'null';
+    var pipeline_wide_parameters = Blockly.JavaScript.valueToCode(block, 'pipeline_wide_parameters', Blockly.JavaScript.ORDER_NONE);
     var pipeline_analyses        = Blockly.JavaScript.statementToCode(block, 'pipeline_analyses');
-    var name_code       = "var pipeline_name = '" + pipeline_name + "';\n";
-    var params_code     = "var pipeline_wide_parameters = " + pipeline_wide_parameters + ";\n";
-    var analyses_code   = "var pipeline_analyses = [\n" + pipeline_analyses + "];";
-    return name_code + params_code + analyses_code;
+
+    var code = "var pipeline = {\n";
+
+    if(pipeline_name) {
+        code += ' "name" : "' + pipeline_name + '",\n';
+    }
+
+    if(pipeline_wide_parameters) {
+        code += ' "parameters" : ' + pipeline_wide_parameters + ',\n';
+    }
+
+    if(pipeline_analyses) {
+        code += ' "analyses" : [\n' + pipeline_analyses + ' ],\n';
+    }
+
+    code += '};\n';
+
+    return code;
 };
 
 
@@ -25,8 +39,19 @@ Blockly.JavaScript['key_value_pair'] = function(block) {
 
 
 Blockly.JavaScript['analysis'] = function(block) {
-    var logic_name  = block.getFieldValue('logic_name');
-    var module      = block.getFieldValue('module');
-    var code        = '{\n' + '"logic_name" : "' + logic_name + '",\n' + '"module" : "' + module + '",\n' + '},\n';
+    var logic_name          = block.getFieldValue('logic_name');
+    var module              = block.getFieldValue('module');
+    var analysis_parameters = Blockly.JavaScript.valueToCode(block, 'analysis_parameters', Blockly.JavaScript.ORDER_NONE);
+
+    var code    = '{\n';
+        code   += '"logic_name" : "' + logic_name + '",\n';
+        code   += '"module" : "' + module + '",\n';
+
+    if(analysis_parameters) {
+        code += '"parameters" : ' + analysis_parameters + ',\n';
+    }
+
+    code += '};\n';
+
     return code;
 };
