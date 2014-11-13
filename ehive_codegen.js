@@ -1,7 +1,7 @@
-Blockly.JavaScript['pipeline'] = function(block) {
+Blockly.eHivePipeConfig['pipeline'] = function(block) {
     var pipeline_name = block.getFieldValue('pipeline_name');
-    var pipeline_wide_parameters = Blockly.JavaScript.valueToCode(block, 'pipeline_wide_parameters', Blockly.JavaScript.ORDER_NONE);
-    var pipeline_analyses        = Blockly.JavaScript.statementToCode(block, 'pipeline_analyses');
+    var pipeline_wide_parameters = Blockly.eHivePipeConfig.valueToCode(block, 'pipeline_wide_parameters', Blockly.eHivePipeConfig.ORDER_NONE);
+    var pipeline_analyses        = Blockly.eHivePipeConfig.statementToCode(block, 'pipeline_analyses');
 
     var code = "var pipeline = {\n";
 
@@ -23,14 +23,14 @@ Blockly.JavaScript['pipeline'] = function(block) {
 };
 
 
-Blockly.JavaScript['dictionary'] = function(block) {
-    var pairs = Blockly.JavaScript.statementToCode(block, 'dictionary_pairs');
+Blockly.eHivePipeConfig['dictionary'] = function(block) {
+    var pairs = Blockly.eHivePipeConfig.statementToCode(block, 'dictionary_pairs');
     var code  = '{\n' + pairs + '}';
-    return [code, Blockly.JavaScript.ORDER_NONE];
+    return [code, Blockly.eHivePipeConfig.ORDER_NONE];
 };
 
 
-Blockly.JavaScript['key_value_pair'] = function(block) {
+Blockly.eHivePipeConfig['key_value_pair'] = function(block) {
     var pair_key   = block.getFieldValue('key');
     var pair_value = block.getFieldValue('value');
     var code = '"' + pair_key + '" : "' + pair_value + '",\n';
@@ -38,10 +38,10 @@ Blockly.JavaScript['key_value_pair'] = function(block) {
 };
 
 
-Blockly.JavaScript['analysis'] = function(block) {
+Blockly.eHivePipeConfig['analysis'] = function(block) {
     var logic_name          = block.getFieldValue('logic_name');
     var module              = block.getFieldValue('module');
-    var analysis_parameters = Blockly.JavaScript.valueToCode(block, 'analysis_parameters', Blockly.JavaScript.ORDER_NONE);
+    var analysis_parameters = Blockly.eHivePipeConfig.valueToCode(block, 'analysis_parameters', Blockly.eHivePipeConfig.ORDER_NONE);
 
     var code    = '{\n';
         code   += '"logic_name" : "' + logic_name + '",\n';
