@@ -51,7 +51,7 @@ Blockly.JavaScript['analysis'] = function(block) {
         code += '"parameters" : ' + analysis_parameters + ',\n';
     }
 
-    code += '};\n';
+    code += '},\n';
 
     return code;
 };
