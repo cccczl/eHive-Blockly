@@ -17,8 +17,7 @@
     <script type="text/javascript" src="msg/js/en.js"></script>
 
     <!-- Code generation bits: -->
-    <script type="text/javascript" src="ehive_pipeconfig.js"></script>
-    <script type="text/javascript" src="ehive_codegen.js"></script>
+    <script type="text/javascript" src="generic_json_codegen.js"></script>
   <style>
     body {
       background-color: #fff;
@@ -55,7 +54,7 @@
     </xml>
     
   <br/>
-  <textarea id=xml_area style="height: 200px; width: 45%"></textarea><textarea id=js_area style="height: 200px; width: 45%"></textarea><br/>
+  <textarea id=xml_area style="height: 200px; width: 45%"></textarea><textarea id=json_area style="height: 200px; width: 45%"></textarea><br/>
   <button onclick='interpretXMLarea()'>interpret XML from the textarea above</button>
      
     <script>
@@ -74,8 +73,8 @@
         var xmlText = document.getElementById("xml_area").value;
 	loadXMLIntoBlockly(xmlText);
     }
-    function updateJSarea() {
-        document.getElementById('js_area').value = Blockly.eHivePipeConfig.workspaceToCode(Blockly.mainWorkspace);
+    function updateJSONarea() {
+        document.getElementById('json_area').value = Blockly.PipeConfig.workspaceToJSON(Blockly.mainWorkspace);
     }
 
     function loadXMLIntoBlockly(xmlText) {
@@ -102,7 +101,7 @@
 	var initial_workspace_state = '<xml xmlns="http://www.w3.org/1999/xhtml"> <block type="pipeline" x="15" y="15"> <field name="pipeline_name"></field> </block> </xml>';
 	loadXMLIntoBlockly(initial_workspace_state);
     Blockly.addChangeListener(updateXMLarea);
-    Blockly.addChangeListener(updateJSarea);
+    Blockly.addChangeListener(updateJSONarea);
   </script>
 
 </body>
