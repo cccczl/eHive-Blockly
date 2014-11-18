@@ -1,10 +1,13 @@
+'use strict';
+
+
 Blockly.Blocks['pipeline'] = {
   init: function() {
     this.setColour(120);
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Pipeline")
-        .appendField(new Blockly.FieldTextInput(""), "pipeline_name");
+        .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
     this.appendValueInput("pipeline_wide_parameters")
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
@@ -56,14 +59,17 @@ Blockly.Blocks['analysis'] = {
   init: function() {
     this.setColour(210);
 
+    // init() is called much more frequently than just to create a visible widget,
+    //        so it's not a good place to count the widgets placed onto the workspace.
+
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Analysis")
-        .appendField(new Blockly.FieldTextInput(""), "analysis_name");
+        .appendField(new Blockly.FieldTextInput( '' ), "analysis_name");
 
     this.appendDummyInput()
         .appendField("module:")
-        .appendField(new Blockly.FieldTextInput("Hive::RunnableDB::SystemCmd"), "module");
+        .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), "module");
 
     this.appendValueInput("analysis_parameters")
         .setCheck("conn_dictionary")
@@ -83,6 +89,16 @@ Blockly.Blocks['analysis'] = {
     this.setPreviousStatement(true, ["conn_between_analysis", "conn_X_2_analysis", "conn_from_dataflow"]);
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
     this.setInputsInline(false);
+  },
+
+  onchange: function() {
+    if(this.workspace && (this.getFieldValue('analysis_name') == '' )) {
+        this.setFieldValue('analysis_' + (++Blockly.Data.Analyses.counter), 'analysis_name');   // unfortunately, the parameters were in the wrong order
+    }
+  },
+
+  getAnalysis: function() {
+    return this.getFieldValue('analysis_name');
   }
 };
 
@@ -94,7 +110,7 @@ Blockly.Blocks['analysis_ref'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField(" ⤷  to Analysis")
-        .appendField(new Blockly.FieldTextInput(""), "analysis_name");
+        .appendField(new Blockly.FieldTextInput( '' ), "analysis_name");
 
     this.setPreviousStatement(true, ["conn_analysis_2_X", "conn_X_2_analysis"]);
   }
