@@ -5,13 +5,13 @@ Blockly.PipeConfig = new Blockly.Generator('PipeConfig');
 Blockly.PipeConfig['pipeline'] = function(block) {
 
     var pipeline_name               = block.getFieldValue( 'pipeline_name' );
-    var pipeline_wide_parameters    = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'pipeline_wide_parameters' ), false );
-    var pipeline_analyses           = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );
+    var pipeline_wide_parameters    = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'pipeline_wide_parameters' ), false );   // null or dict
+    var backbone_of_analyses        = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );           // null or list
 
     var obj = {
         'pipeline_name'             : pipeline_name,
         'pipeline_wide_parameters'  : pipeline_wide_parameters,
-        'pipeline_analyses'         : pipeline_analyses
+        'pipeline_analyses'         : backbone_of_analyses
     };
 
     return obj;
@@ -36,6 +36,61 @@ Blockly.PipeConfig['key_value_pair'] = function(block) {    // special case wher
     dict[pair_key] = pair_value;
 
     return dict;
+}
+
+
+Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of analyses is a list
+
+    var analysis_name       = block.getFieldValue( 'analysis_name' );
+    var module              = block.getFieldValue( 'module' );
+    var analysis_parameters = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'analysis_parameters' ), false );// null or dict
+    var dataflows           = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'dataflows' ), true );           // a "horizontal" list
+    var template            = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );           // null or dict
+
+    var analysis_obj = {
+        'analysis_name'         : analysis_name,
+        'module'                : module,
+        'analysis_parameters'   : analysis_parameters,
+        'dataflows'             : dataflows,
+        'template'              : template          // since the default dataflow_rule object is implicit, the dataflow template will have to squat here
+    };
+
+    var nextBlock = block.getNextBlock();
+    var tail = nextBlock ? Blockly.PipeConfig.generalBlockToObj( nextBlock, true) : [];
+    tail.unshift( analysis_obj );
+
+    return tail;
+}
+
+
+Blockly.PipeConfig['analysis_ref'] = function(block) {
+
+    var analysis_name       = block.getFieldValue( 'analysis_name' );
+
+    return [ { 'analysis_name' : analysis_name } ];
+}
+
+
+Blockly.PipeConfig['dataflow_rule'] = function(block) {     // horizontal chain of dataflows is a list
+
+    var branch_number       = block.getFieldValue( 'branch_number' );
+    var more_dataflows      = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
+    var template            = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );       // null or dict
+
+    var nextBlock = block.getNextBlock();
+    if( nextBlock ) {
+        var chain_of_analyses = Blockly.PipeConfig.generalBlockToObj( nextBlock, true );
+
+        var dataflow_rule_obj = {
+            'branch_number'     : branch_number,
+            'template'          : template,
+            'target'            : chain_of_analyses
+        };
+
+        more_dataflows.unshift( dataflow_rule_obj );
+    }
+
+    return more_dataflows;
 }
 
 
@@ -95,6 +150,8 @@ Blockly.PipeConfig.generalBlockToObj = function(block, returnarray) {
             return obj;
         }
 
+    } else if( returnarray ) {
+        return [];
     } else {
         return null;
     }

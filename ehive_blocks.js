@@ -59,7 +59,7 @@ Blockly.Blocks['analysis'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Analysis")
-        .appendField(new Blockly.FieldTextInput(""), "logic_name");
+        .appendField(new Blockly.FieldTextInput(""), "analysis_name");
 
     this.appendDummyInput()
         .appendField("module:")
@@ -87,14 +87,14 @@ Blockly.Blocks['analysis'] = {
 };
 
 
-Blockly.Blocks['named_analysis'] = {
+Blockly.Blocks['analysis_ref'] = {
   init: function() {
     this.setColour(210);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField(" ⤷  to Analysis")
-        .appendField(new Blockly.FieldTextInput(""), "logic_name");
+        .appendField(new Blockly.FieldTextInput(""), "analysis_name");
 
     this.setPreviousStatement(true, ["conn_analysis_2_X", "conn_X_2_analysis"]);
   }
