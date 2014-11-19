@@ -5,8 +5,8 @@ Blockly.PipeConfig = new Blockly.Generator('PipeConfig');
 Blockly.PipeConfig['pipeline'] = function(block) {
 
     var pipeline_name               = block.getFieldValue( 'pipeline_name' );
-    var pipeline_wide_parameters    = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'pipeline_wide_parameters' ), false );   // null or dict
-    var backbone_of_analyses        = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );           // null or list
+    var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_wide_parameters' ), false );   // null or dict
+    var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );           // null or list
 
     var obj = {
         'pipeline_name'             : pipeline_name,
@@ -20,7 +20,7 @@ Blockly.PipeConfig['pipeline'] = function(block) {
 
 Blockly.PipeConfig['dictionary'] = function(block) {        // just pass it through
 
-    var dictionary_pairs            = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'dictionary_pairs' ), false ) || {};
+    var dictionary_pairs            = this.generalBlockToObj( block.getInputTargetBlock( 'dictionary_pairs' ), false ) || {};
 
     return dictionary_pairs;
 }
@@ -32,7 +32,7 @@ Blockly.PipeConfig['key_value_pair'] = function(block) {    // special case wher
     var pair_value  = block.getFieldValue( 'value' );
 
     var nextBlock = block.getNextBlock();
-    var dict = nextBlock ? Blockly.PipeConfig.key_value_pair( nextBlock ) : {};
+    var dict = nextBlock ? this.key_value_pair( nextBlock ) : {};
     dict[pair_key] = pair_value;
 
     return dict;
@@ -43,9 +43,9 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
 
     var analysis_name       = block.getFieldValue( 'analysis_name' );
     var module              = block.getFieldValue( 'module' );
-    var analysis_parameters = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'analysis_parameters' ), false );// null or dict
-    var dataflows           = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'dataflows' ), true );           // a "horizontal" list
-    var template            = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );           // null or dict
+    var analysis_parameters = this.generalBlockToObj( block.getInputTargetBlock( 'analysis_parameters' ), false );// null or dict
+    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'dataflows' ), true );           // a "horizontal" list
+    var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );           // null or dict
 
     var analysis_obj = {
         'analysis_name'         : analysis_name,
@@ -56,7 +56,7 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
     };
 
     var nextBlock = block.getNextBlock();
-    var tail = nextBlock ? Blockly.PipeConfig.generalBlockToObj( nextBlock, true) : [];
+    var tail = nextBlock ? this.generalBlockToObj( nextBlock, true) : [];
     tail.unshift( analysis_obj );
 
     return tail;
@@ -74,12 +74,12 @@ Blockly.PipeConfig['analysis_ref'] = function(block) {
 Blockly.PipeConfig['dataflow_rule'] = function(block) {     // horizontal chain of dataflows is a list
 
     var branch_number       = block.getFieldValue( 'branch_number' );
-    var more_dataflows      = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
-    var template            = Blockly.PipeConfig.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );       // null or dict
+    var more_dataflows      = this.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
+    var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );       // null or dict
 
     var nextBlock = block.getNextBlock();
     if( nextBlock ) {
-        var chain_of_analyses = Blockly.PipeConfig.generalBlockToObj( nextBlock, true );
+        var chain_of_analyses = this.generalBlockToObj( nextBlock, true );
 
         var dataflow_rule_obj = {
             'branch_number'     : branch_number,
@@ -101,7 +101,7 @@ Blockly.PipeConfig.generalBlockToObj = function(block, returnarray) {
             // dispatcher:
         var func = this[block.type];
         if(func) {
-            return func.call(block, block);
+            return func.call(this, block);
         }
 
         var obj = {
