@@ -80,7 +80,7 @@
 	loadXMLIntoBlockly(xmlText);
     }
     function updateJSONarea() {
-        document.getElementById('json_area').value = Blockly.PipeConfig.workspaceToJSON(Blockly.mainWorkspace);
+        document.getElementById('json_area').value = Blockly.PipeConfig.workspaceToJSON(Blockly.mainWorkspace, true); // true means "code is generated only for the pipeline block and its descendants"
     }
     function loadXMLIntoBlockly(xmlText) {
         var dom = Blockly.Xml.textToDom( xmlText );

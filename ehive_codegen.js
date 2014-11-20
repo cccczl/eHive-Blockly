@@ -8,13 +8,13 @@ Blockly.PipeConfig['pipeline'] = function(block) {
     var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_wide_parameters' ), false );   // null or dict
     var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );           // null or list
 
-    var obj = {
+    var pipeline_obj = {
         'pipeline_name'             : pipeline_name,
         'pipeline_wide_parameters'  : pipeline_wide_parameters,
         'pipeline_analyses'         : backbone_of_analyses
     };
 
-    return obj;
+    return pipeline_obj;
 }
 
 
@@ -239,11 +239,14 @@ Blockly.PipeConfig.generalBlockToObj = function(block, returnarray) {
 }
 
 
-Blockly.PipeConfig.workspaceToJSON = function(workspace) {
+Blockly.PipeConfig.workspaceToJSON = function(workspace, onlyPipelineBlock) {
 
     var json_text = '';
 
-    var blocks = workspace.getTopBlocks(true);
+    var blocks = onlyPipelineBlock
+        ? [ workspace.getBlockById( 1 ) ]   // assume pipeline block has been put first and has block.id=1
+        : workspace.getTopBlocks(true);
+
     for (var i = 0, block; block = blocks[i]; i++) {
 
         var obj = this.generalBlockToObj( block, false );
