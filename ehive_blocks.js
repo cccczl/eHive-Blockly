@@ -8,15 +8,55 @@ Blockly.Blocks['pipeline'] = {
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Pipeline")
         .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
+
+/*
     this.appendValueInput("pipeline_wide_parameters")
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[parameters] →");
+*/
+
     this.appendDummyInput()
+        .appendField("parameters:")
+        .appendField(new Blockly.FieldCheckbox(false, function(option) {
+                    this.sourceBlock_.updateShape_(option);
+                }
+        ), 'params_checkbox');
+
+    this.appendDummyInput('analyses_label')
         .appendField("analyses:");
     this.appendStatementInput("pipeline_analyses")
         .setCheck(["conn_X_2_analysis"]);
+
     this.setDeletable(false);
+  },
+  mutationToDom: function() {
+    var container = document.createElement('mutation');
+    container.setAttribute('pipeline_wide_parameters', this.getFieldValue('params_checkbox') == 'TRUE');
+    return container;
+  },
+  domToMutation: function(xmlElement) {
+    this.updateShape_(xmlElement.getAttribute('pipeline_wide_parameters') == 'TRUE');
+  },
+  updateShape_: function(option) {
+        var inputExists = this.getInput('pipeline_wide_parameters');
+        if(option == true) {
+            if(!inputExists) {
+                this.appendDummyInput('open_bracket')
+                    .appendField(" { ");
+                this.appendStatementInput('pipeline_wide_parameters')
+                    .setCheck(["conn_kv_pair"]);
+                this.appendDummyInput('close_bracket')
+                    .appendField(" } ");
+                this.moveInputBefore('open_bracket', 'analyses_label');
+                this.moveInputBefore('pipeline_wide_parameters', 'analyses_label');
+                this.moveInputBefore('close_bracket', 'analyses_label');
+            }
+        } else if(inputExists) {
+            this.removeInput('open_bracket');
+            this.removeInput('pipeline_wide_parameters');
+            this.removeInput('close_bracket');
+        }
   }
 };
 
@@ -26,13 +66,13 @@ Blockly.Blocks['dictionary'] = {
     this.setColour(20);
     this.setOutput(true, ["conn_dictionary"]);
 
-    this.appendDummyInput()
+    this.appendDummyInput('open_bracket')
         .appendField(" { ");
 
     this.appendStatementInput("dictionary_pairs")
         .setCheck(["conn_kv_pair"]);
 
-    this.appendDummyInput()
+    this.appendDummyInput('close_bracket')
         .appendField(" } ");
 
     this.setInputsInline(false);
