@@ -36,7 +36,16 @@
 
   <p>Export this pipeline as <a href="#" onclick="downloadXml()">XML</a> (may not work in some browsers)</p>
 
-    <xml id="hive_toolbox" style="display: none">
+  <br/>
+  <textarea id=xml_area style="height: 200px; width: 99%"></textarea><br/>
+  <button onclick='interpretXMLarea()'>interpret XML from the textarea above</button>
+
+    <table style="height: 800px; width: 100%"><tr>
+    <td style="width: 75%"><div id="blocklyDiv" style="height: 99%; width: 99%"></div></td>
+    <td style="width: 25%"><textarea id=json_area style="height: 99%; width: 99%"></textarea></td>
+    </tr></table>
+
+    <xml id="ehive_toolbox" style="display: none">
     <category name="Analyses">
     <block type="analysis"></block>
     <block type="analysis_ref"></block>
@@ -53,12 +62,8 @@
     <block type="key_value_pair"></block>
     </category>
     </xml>
-    
-  <br/>
-  <textarea id=xml_area style="height: 200px; width: 45%"></textarea><textarea id=json_area style="height: 200px; width: 45%"></textarea><br/>
-  <button onclick='interpretXMLarea()'>interpret XML from the textarea above</button>
-     
-    <script>
+
+  <script>
 
     function downloadXml() {
       var xmlDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
@@ -77,24 +82,14 @@
     function updateJSONarea() {
         document.getElementById('json_area').value = Blockly.PipeConfig.workspaceToJSON(Blockly.mainWorkspace);
     }
-
     function loadXMLIntoBlockly(xmlText) {
         var dom = Blockly.Xml.textToDom( xmlText );
         Blockly.mainWorkspace.clear();
         Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
     }
 
-    </script>
-  
-
-  <div id="blocklyDiv" style="height: 800px; width: 99%;"></div>
-
-
-
-
-  <script>
 	Blockly.inject(document.getElementById('blocklyDiv'), {
-		toolbox: document.getElementById('hive_toolbox'), // mandatory
+		toolbox: document.getElementById('ehive_toolbox'), // mandatory
 		sound: false,
 		collapse: true, comments: true, disable: false, scrollbars: true, trashcan: true // those ones are automatically true when there are categories
 	});
