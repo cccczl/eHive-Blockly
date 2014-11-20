@@ -118,10 +118,36 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
 }
 
 
+Blockly.PipeConfig['extra_semaphore'] = function(block) {     // horizontal chain of dataflows is a list
+
+    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
+    var branch_number       = block.getFieldValue( 'branch_number' );
+    var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );       // null or dict
+    var semaphored_fan      = this.generalBlockToObj( block.getInputTargetBlock( 'semaphored_fan' ), true );  // a "horizontal" list
+    var funnelBlock         = block.getNextBlock();
+
+    if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {
+        var dataflow_rule_obj = {
+            'branch_number'     : 1,
+            'template'          : template,
+            'target'            : funnelBlock.getFieldValue( 'analysis_name' )
+        };
+
+        if(semaphored_fan.length>0) {
+            dataflow_rule_obj.semaphored_fan = semaphored_fan;
+        }
+
+        dataflows.push( dataflow_rule_obj );
+    }
+
+    return dataflows;
+}
+
+
 Blockly.PipeConfig['dataflow_rule'] = function(block) {     // horizontal chain of dataflows is a list
 
+    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
     var branch_number       = block.getFieldValue( 'branch_number' );
-    var more_dataflows      = this.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
     var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );       // null or dict
 
     var nextBlock = block.getNextBlock();
@@ -142,10 +168,10 @@ Blockly.PipeConfig['dataflow_rule'] = function(block) {     // horizontal chain 
             dataflow_rule_obj.target = ':////accu?' + nextBlock.getFieldValue( 'struct_name' ) + '=' + nextBlock.getFieldValue( 'signature_template' );
         }
 
-        more_dataflows.unshift( dataflow_rule_obj );
+        dataflows.unshift( dataflow_rule_obj );
     }
 
-    return more_dataflows;
+    return dataflows;
 }
 
 
