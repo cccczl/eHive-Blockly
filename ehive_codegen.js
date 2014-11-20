@@ -79,11 +79,15 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
 
             if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {
                 var dataflow_rule_obj = {
-                    'funnel_branch_number'  : 1,
-                    'funnel_template'       : template,
-                    'fan'                   : semaphored_fan,
-                    'funnel_analysis_name'  : funnelBlock.getFieldValue( 'analysis_name' )
+                    'branch_number'     : 1,
+                    'template'          : template,
+                    'target'            : funnelBlock.getFieldValue( 'analysis_name' )
                 };
+
+                if(semaphored_fan.length>0) {
+                    dataflow_rule_obj.semaphored_fan = semaphored_fan;
+                }
+
                 dataflows.push( dataflow_rule_obj );
             }
 
