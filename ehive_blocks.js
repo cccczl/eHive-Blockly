@@ -10,7 +10,7 @@ Blockly.Blocks['pipeline'] = {
         .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
 
 /*
-    this.appendValueInput("pipeline_wide_parameters")
+    this.appendValueInput("parameters")
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[parameters] →");
@@ -32,29 +32,29 @@ Blockly.Blocks['pipeline'] = {
   },
   mutationToDom: function() {
     var container = document.createElement('mutation');
-    container.setAttribute('pipeline_wide_parameters', this.getFieldValue('params_checkbox') == 'TRUE');
+    container.setAttribute('parameters', this.getFieldValue('params_checkbox') == 'TRUE');
     return container;
   },
   domToMutation: function(xmlElement) {
-    this.updateShape_(xmlElement.getAttribute('pipeline_wide_parameters') == 'TRUE');
+    this.updateShape_(xmlElement.getAttribute('parameters') == 'TRUE');
   },
   updateShape_: function(option) {
-        var inputExists = this.getInput('pipeline_wide_parameters');
+        var inputExists = this.getInput('parameters');
         if(option == true) {
             if(!inputExists) {
                 this.appendDummyInput('open_bracket')
                     .appendField(" { ");
-                this.appendStatementInput('pipeline_wide_parameters')
+                this.appendStatementInput('parameters')
                     .setCheck(["conn_kv_pair"]);
                 this.appendDummyInput('close_bracket')
                     .appendField(" } ");
                 this.moveInputBefore('open_bracket', 'analyses_label');
-                this.moveInputBefore('pipeline_wide_parameters', 'analyses_label');
+                this.moveInputBefore('parameters', 'analyses_label');
                 this.moveInputBefore('close_bracket', 'analyses_label');
             }
         } else if(inputExists) {
             this.removeInput('open_bracket');
-            this.removeInput('pipeline_wide_parameters');
+            this.removeInput('parameters');
             this.removeInput('close_bracket');
         }
   }

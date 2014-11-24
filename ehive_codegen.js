@@ -7,8 +7,8 @@ Blockly.PipeConfig = new Blockly.Generator('PipeConfig');
 Blockly.PipeConfig['pipeline'] = function(block) {
 
     var pipeline_name               = block.getFieldValue( 'pipeline_name' );
-    var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_wide_parameters' ), false );   // null or dict
-    var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );           // null or list
+    var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'parameters' ), false );           // null or dict
+    var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );     // null or list
 
     var pipeline_obj = {};
 
@@ -78,13 +78,9 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
             var funnelBlock     = nextBlock.getNextBlock();
             var semaphored_fan  = this.generalBlockToObj( nextBlock.getInputTargetBlock( 'semaphored_fan' ), true );    // a "horizontal" list
 
-            if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {
-                var dataflow_rule_obj = {
-                    'branch_number'     : 1
-                };
-                if(template) { dataflow_rule_obj.template = template; }
+            if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {  // not expecting anything else to stick
 
-                dataflow_rule_obj.target_ref = funnelBlock.getFieldValue( 'analysis_name' );    // since it is the backbone, always treat the target as analysis_ref
+                var dataflow_rule_obj = this.toDataflowObj(1, template, funnelBlock, true); // since it is the backbone, always treat the target as analysis_ref
 
                 if(semaphored_fan.length) {       // otherwise silently skip the semaphore altogether
                     dataflow_rule_obj.semaphored_fan = semaphored_fan;
@@ -96,18 +92,7 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
             nextBlock = funnelBlock;
 
         } else {    // any other autoflow rule
-            var dataflow_rule_obj = {
-                'branch_number'     : 1
-            };
-            if(template) { dataflow_rule_obj.template = template; }
-
-            if( nextBlock.type == 'analysis' || nextBlock.type == 'analysis_ref' ) {
-                dataflow_rule_obj.target_ref = nextBlock.getFieldValue( 'analysis_name' );
-            } else if( nextBlock.type == 'table' ) {
-                dataflow_rule_obj.target_ref = ':////' + nextBlock.getFieldValue( 'table_name' );
-            } else if( nextBlock.type == 'accu' ) {
-                dataflow_rule_obj.target_ref = ':////accu?' + nextBlock.getFieldValue( 'struct_name' ) + '=' + nextBlock.getFieldValue( 'signature_template' );
-            }
+            var dataflow_rule_obj = this.toDataflowObj(1, template, nextBlock, true);
 
             dataflows.push( dataflow_rule_obj );
         }
@@ -131,22 +116,14 @@ Blockly.PipeConfig['extra_semaphore'] = function(block) {     // horizontal chai
     var funnelBlock         = block.getNextBlock();
 
     if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {
-        var dataflow_rule_obj = {
-            'branch_number'     : 1
-        };
-        if(template) { dataflow_rule_obj.template = template; }
 
-        if( funnelBlock.type == 'analysis' ) {
-            dataflow_rule_obj.target_chain = this.generalBlockToObj( funnelBlock, true );
-        } else if( funnelBlock.type == 'analysis_ref' ) {
-            dataflow_rule_obj.target_ref = funnelBlock.getFieldValue( 'analysis_name' );
-        }
+        var dataflow_rule_obj = this.toDataflowObj(branch_number, template, funnelBlock, false);
 
         if(semaphored_fan.length) {   // otherwise silently assume it is a non-semaphored dataflow
             dataflow_rule_obj.semaphored_fan = semaphored_fan;
         }
 
-        dataflows.push( dataflow_rule_obj );
+        dataflows.unshift( dataflow_rule_obj );
     }
 
     return dataflows;
@@ -161,26 +138,33 @@ Blockly.PipeConfig['dataflow_rule'] = function(block) {     // horizontal chain 
 
     var nextBlock = block.getNextBlock();
     if( nextBlock ) {
-
-        var dataflow_rule_obj = {
-            'branch_number'     : branch_number
-        };
-        if(template) { dataflow_rule_obj.template = template; }
-
-        if( nextBlock.type == 'analysis' ) {
-            dataflow_rule_obj.target_chain = this.generalBlockToObj( nextBlock, true );
-        } else if( nextBlock.type == 'analysis_ref' ) {
-            dataflow_rule_obj.target_ref = nextBlock.getFieldValue( 'analysis_name' );
-        } else if( nextBlock.type == 'table' ) {
-            dataflow_rule_obj.target_ref = ':////' + nextBlock.getFieldValue( 'table_name' );
-        } else if( nextBlock.type == 'accu' ) {
-            dataflow_rule_obj.target_ref = ':////accu?' + nextBlock.getFieldValue( 'struct_name' ) + '=' + nextBlock.getFieldValue( 'signature_template' );
-        }
+        var dataflow_rule_obj = this.toDataflowObj(branch_number, template, nextBlock, false);
 
         dataflows.unshift( dataflow_rule_obj );
     }
 
     return dataflows;
+}
+
+
+Blockly.PipeConfig.toDataflowObj = function(branch_number, template, targetBlock, linkAnalyses) {
+
+    var dataflow_rule_obj = {
+        'branch_number'     : branch_number
+    };
+    if(template) { dataflow_rule_obj.template = template; }
+
+    if(!linkAnalyses && targetBlock.type == 'analysis' ) {
+        dataflow_rule_obj.target_chain = this.generalBlockToObj( targetBlock, true );
+    } else if( targetBlock.type == 'analysis_ref' || (linkAnalyses && targetBlock.type == 'analysis') ) {
+        dataflow_rule_obj.target_ref = targetBlock.getFieldValue( 'analysis_name' );
+    } else if( targetBlock.type == 'table' ) {
+        dataflow_rule_obj.target_ref = ':////' + targetBlock.getFieldValue( 'table_name' );
+    } else if( targetBlock.type == 'accu' ) {
+        dataflow_rule_obj.target_ref = ':////accu?' + targetBlock.getFieldValue( 'struct_name' ) + '=' + targetBlock.getFieldValue( 'signature_template' );
+    }
+
+    return dataflow_rule_obj;
 }
 
 
