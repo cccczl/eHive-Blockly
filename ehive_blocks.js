@@ -19,9 +19,9 @@ Blockly.Blocks['pipeline'] = {
     this.appendDummyInput()
         .appendField("parameters:")
         .appendField(new Blockly.FieldCheckbox(false, function(option) {
-                    this.sourceBlock_.updateShape_(option);
+                    this.sourceBlock_.updateShape_(option, 'analyses_label');
                 }
-        ), 'params_checkbox');
+        ), 'parameters_checkbox');
 
     this.appendDummyInput('analyses_label')
         .appendField("analyses:");
@@ -32,13 +32,13 @@ Blockly.Blocks['pipeline'] = {
   },
   mutationToDom: function() {
     var container = document.createElement('mutation');
-    container.setAttribute('parameters', this.getFieldValue('params_checkbox') == 'TRUE');
+    container.setAttribute('parameters_on', this.getFieldValue('parameters_checkbox') == 'TRUE');
     return container;
   },
   domToMutation: function(xmlElement) {
-    this.updateShape_(xmlElement.getAttribute('parameters') == 'TRUE');
+    this.updateShape_(xmlElement.getAttribute('parameters_on') == 'TRUE', 'analyses_label');
   },
-  updateShape_: function(option) {
+  updateShape_: function(option, stickBefore) {
         var inputExists = this.getInput('parameters');
         if(option == true) {
             if(!inputExists) {
@@ -48,9 +48,9 @@ Blockly.Blocks['pipeline'] = {
                     .setCheck(["conn_kv_pair"]);
                 this.appendDummyInput('close_bracket')
                     .appendField(" } ");
-                this.moveInputBefore('open_bracket', 'analyses_label');
-                this.moveInputBefore('parameters', 'analyses_label');
-                this.moveInputBefore('close_bracket', 'analyses_label');
+                this.moveInputBefore('open_bracket', stickBefore);
+                this.moveInputBefore('parameters', stickBefore);
+                this.moveInputBefore('close_bracket', stickBefore);
             }
         } else if(inputExists) {
             this.removeInput('open_bracket');
