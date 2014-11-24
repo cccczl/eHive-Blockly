@@ -61,9 +61,9 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
 
     var analysis_name       = block.getFieldValue( 'analysis_name' );
     var module              = block.getFieldValue( 'module' );
-    var analysis_parameters = this.generalBlockToObj( block.getInputTargetBlock( 'analysis_parameters' ), false );// null or dict
-    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'dataflows' ), true );           // a "horizontal" list
-    var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );           // null or dict
+    var analysis_parameters = this.generalBlockToObj( block.getInputTargetBlock( 'parameters' ), false );   // null or dict
+    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'dataflows' ), true );     // a "horizontal" list
+    var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );     // null or dict
 
     var analysis_obj = {
         'analysis_name'         : analysis_name,

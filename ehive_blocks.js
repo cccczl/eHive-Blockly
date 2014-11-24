@@ -111,10 +111,19 @@ Blockly.Blocks['analysis'] = {
         .appendField("module:")
         .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), "module");
 
+/*
     this.appendValueInput("analysis_parameters")
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[parameters] →");
+*/
+
+    this.appendDummyInput()
+        .appendField("parameters:")
+        .appendField(new Blockly.FieldCheckbox(false, function(option) {
+                    this.sourceBlock_.updateShape_(option, 'dataflows');
+                }
+        ), 'parameters_checkbox');
 
     this.appendValueInput("dataflows")
         .setCheck(["conn_dataflow_rule", "conn_next_semaphore_adaptor"])
@@ -139,6 +148,35 @@ Blockly.Blocks['analysis'] = {
 
   getAnalysis: function() {
     return this.getFieldValue('analysis_name');
+  },
+
+  mutationToDom: function() {
+    var container = document.createElement('mutation');
+    container.setAttribute('parameters_on', this.getFieldValue('parameters_checkbox') == 'TRUE');
+    return container;
+  },
+  domToMutation: function(xmlElement) {
+    this.updateShape_(xmlElement.getAttribute('parameters_on') == 'TRUE', 'dataflows');
+  },
+  updateShape_: function(option, stickBefore) {
+        var inputExists = this.getInput('parameters');
+        if(option == true) {
+            if(!inputExists) {
+                this.appendDummyInput('open_bracket')
+                    .appendField(" { ");
+                this.appendStatementInput('parameters')
+                    .setCheck(["conn_kv_pair"]);
+                this.appendDummyInput('close_bracket')
+                    .appendField(" } ");
+                this.moveInputBefore('open_bracket', stickBefore);
+                this.moveInputBefore('parameters', stickBefore);
+                this.moveInputBefore('close_bracket', stickBefore);
+            }
+        } else if(inputExists) {
+            this.removeInput('open_bracket');
+            this.removeInput('parameters');
+            this.removeInput('close_bracket');
+        }
   }
 };
 
