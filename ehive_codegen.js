@@ -12,6 +12,14 @@ Blockly.PipeConfig['pipeline'] = function(block) {
 
     var pipeline_obj = {};
 
+/*
+    A usage example of MinusPlusCounter.
+*/
+    var age                         = block.getFieldValue( 'age' );
+    var temperature                 = block.getFieldValue( 'temperature' );
+    if(age)                                                 { pipeline_obj.age                      = age; }
+    if(temperature)                                         { pipeline_obj.temperature              = temperature; }
+
     if(pipeline_name)                                       { pipeline_obj.pipeline_name            = pipeline_name; }
     if(pipeline_wide_parameters)                            { pipeline_obj.pipeline_wide_parameters = pipeline_wide_parameters; }
     if(backbone_of_analyses && backbone_of_analyses.length) { pipeline_obj.pipeline_analyses        = backbone_of_analyses; }

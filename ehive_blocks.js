@@ -9,6 +9,9 @@ Blockly.Blocks['pipeline'] = {
         .appendField("Pipeline")
         .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
 
+    Blockly.Block.appendMinusPlusCounter(this, 'age', 0, 0 );
+    Blockly.Block.appendMinusPlusCounter(this, 'temperature', 37, 34, 42 );
+
 /*
     this.appendValueInput("parameters")
         .setCheck("conn_dictionary")
@@ -101,6 +104,8 @@ Blockly.Blocks['analysis'] = {
 
     // init() is called much more frequently than just to create a visible widget,
     //        so it's not a good place to count the widgets placed onto the workspace.
+
+    appendCounterFieldgroup(this);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
