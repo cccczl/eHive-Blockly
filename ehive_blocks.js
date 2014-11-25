@@ -9,22 +9,23 @@ Blockly.Blocks['pipeline'] = {
         .appendField("Pipeline")
         .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
 
-    Blockly.Block.appendMinusPlusCounter(this, 'age', 0, 0 );
-    Blockly.Block.appendMinusPlusCounter(this, 'temperature', 37, 34, 42 );
-
 /*
-    this.appendValueInput("parameters")
-        .setCheck("conn_dictionary")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[parameters] →");
-*/
-
     this.appendDummyInput()
         .appendField("parameters:")
         .appendField(new Blockly.FieldCheckbox(false, function(option) {
                     this.sourceBlock_.updateShape_(option, 'analyses_label');
                 }
         ), 'parameters_checkbox');
+*/
+
+    var name = 'parameters';
+    this[name+'_counter'] = 0;
+
+    this.appendDummyInput(name+'_input')
+        .appendField(name+':', name+'_label')
+//        .appendField(String(this[name+'_counter']), name+'_display')
+        .appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.updateShape_(name, false, 'analyses_label'); }) )
+        .appendField(new Blockly.FieldTextbutton('+', function() { this.sourceBlock_.updateShape_(name, true, 'analyses_label'); }) );
 
     this.appendDummyInput('analyses_label')
         .appendField("analyses:");
@@ -33,6 +34,7 @@ Blockly.Blocks['pipeline'] = {
 
     this.setDeletable(false);
   },
+/*
   mutationToDom: function() {
     var container = document.createElement('mutation');
     container.setAttribute('parameters_on', this.getFieldValue('parameters_checkbox') == 'TRUE');
@@ -41,8 +43,26 @@ Blockly.Blocks['pipeline'] = {
   domToMutation: function(xmlElement) {
     this.updateShape_(xmlElement.getAttribute('parameters_on') == 'TRUE', 'analyses_label');
   },
-  updateShape_: function(option, stickBefore) {
-        var inputExists = this.getInput('parameters');
+*/
+  updateShape_: function(name, adding, stickBefore) {
+
+        var counter_ = this[name+'_counter'];
+        if(adding) {
+            this.appendDummyInput(name+'_input_'+counter_)
+                .appendField(new Blockly.FieldTextInput('key_'+counter_), name+'_key_field_'+counter_)
+                .appendField(" => ")
+                .appendField(new Blockly.FieldTextInput('value_'+counter_), name+'_value_field_'+counter_);
+            this.moveInputBefore(name+'_input_'+counter_, stickBefore);
+            counter_++;
+        } else if(counter_ > 0) {
+            counter_--;
+            this.removeInput(name+'_input_'+counter_);
+        }
+        this[name+'_counter'] = counter_;
+//        this.setFieldValue(String(counter_), name+'_display');
+
+/*
+        var inputExists = this.getInput('temperature');
         if(option == true) {
             if(!inputExists) {
                 this.appendDummyInput('open_bracket')
@@ -60,6 +80,7 @@ Blockly.Blocks['pipeline'] = {
             this.removeInput('parameters');
             this.removeInput('close_bracket');
         }
+*/
   }
 };
 

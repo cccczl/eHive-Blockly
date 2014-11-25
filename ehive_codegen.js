@@ -4,21 +4,32 @@
 Blockly.PipeConfig = new Blockly.Generator('PipeConfig');
 
 
+Blockly.PipeConfig.built_in_dict = function(block, name) {
+    var counter_ = block[name+'_counter'];
+
+    var dictionary = {};
+
+    for (var i = 0; i<counter_; i++) {
+        var input       = block.getInput(name+'_input_'+counter_);
+        var pair_key    = block.getFieldValue( name+'_key_field_'+i );
+        var pair_value  = block.getFieldValue( name+'_value_field_'+i );
+
+        dictionary[pair_key] = pair_value;
+    }
+
+    return dictionary;
+}
+
+
 Blockly.PipeConfig['pipeline'] = function(block) {
 
     var pipeline_name               = block.getFieldValue( 'pipeline_name' );
-    var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'parameters' ), false );           // null or dict
+//    var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'parameters' ), false );           // null or dict
+    var pipeline_wide_parameters    = this.built_in_dict( block, 'parameters' );
+
     var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );     // null or list
 
     var pipeline_obj = {};
-
-/*
-    A usage example of MinusPlusCounter.
-*/
-    var age                         = block.getFieldValue( 'age' );
-    var temperature                 = block.getFieldValue( 'temperature' );
-    if(age)                                                 { pipeline_obj.age                      = age; }
-    if(temperature)                                         { pipeline_obj.temperature              = temperature; }
 
     if(pipeline_name)                                       { pipeline_obj.pipeline_name            = pipeline_name; }
     if(pipeline_wide_parameters)                            { pipeline_obj.pipeline_wide_parameters = pipeline_wide_parameters; }
