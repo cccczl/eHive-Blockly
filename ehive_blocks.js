@@ -1,6 +1,15 @@
 'use strict';
 
 
+Blockly.Block.prototype.appendDictionaryInput = function(dictionary_name) {
+    this.appendValueInput(dictionary_name)
+        .setCheck("conn_dictionary")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField('['+dictionary_name+']')
+        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock(dictionary_name); }) );
+};
+
+
 Blockly.Block.prototype.addNewDictionaryBlock = function(dictionary_name) {
 
     if(! this.getInputTargetBlock(dictionary_name)) {
@@ -23,11 +32,7 @@ Blockly.Blocks['pipeline'] = {
         .appendField("Pipeline")
         .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
 
-    this.appendValueInput("parameters")
-        .setCheck("conn_dictionary")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[parameters]")
-        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('parameters'); }) );
+    this.appendDictionaryInput('parameters');
 
     this.appendDummyInput('analyses_label')
         .appendField("analyses:");
@@ -101,22 +106,17 @@ Blockly.Blocks['analysis'] = {
         .appendField("module:")
         .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), "module");
 
-    this.appendValueInput("parameters")
-        .setCheck("conn_dictionary")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[parameters]")
-        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('parameters'); }) );
+    this.appendDictionaryInput('parameters');
 
     this.appendValueInput("dataflows")
         .setCheck(["conn_dataflow_rule", "conn_next_semaphore_adaptor"])
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[dataflows] →");
 
-    this.appendValueInput("template")
-        .setCheck("conn_dictionary")
-        .appendField(" ↓  branch #1")
-        .appendField("                      [template]")
-        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('template'); }) );
+    this.appendDictionaryInput('template');
+
+    this.appendDummyInput()
+        .appendField(" ↓  branch #1");
 
     this.setPreviousStatement(true, ["conn_between_analysis", "conn_X_2_analysis", "conn_from_dataflow"]);
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
@@ -204,12 +204,11 @@ Blockly.Blocks['dataflow_rule'] = {
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Dataflow");
 
-    this.appendValueInput("template")
-        .setCheck("conn_dictionary")
+    this.appendDictionaryInput('template');
+
+    this.appendDummyInput()
         .appendField(" ⇊  branch #")
-        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number")
-        .appendField("                      [template]")
-        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('template'); }) );
+        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
 
     this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow"]);
     this.setInputsInline(false);
@@ -265,12 +264,11 @@ Blockly.Blocks['extra_semaphore'] = {
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Funnel");
 
-    this.appendValueInput("template")
-        .setCheck("conn_dictionary")
+    this.appendDictionaryInput('template');
+
+    this.appendDummyInput()
         .appendField(" ↓  branch #")
-        .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number")
-        .appendField("                      [template]")
-        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('template'); }) );
+        .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number");
 
     this.setNextStatement(true, ["conn_X_2_analysis"]);
     this.setInputsInline(false);
