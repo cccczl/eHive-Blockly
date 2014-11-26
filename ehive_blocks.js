@@ -54,14 +54,15 @@ Blockly.Blocks['dictionary2'] = {
             counter_++;
         } else {
             counter_--;
-            if(indexToDelete!=counter_) {   // swap the one being deleted with the last one, then delete the last one
-                var last_key    = this.getFieldValue( 'key_field_'+counter_ );
-                var last_value  = this.getFieldValue( 'value_field_'+counter_ );
+            for(var i=indexToDelete; i<counter_; i++) { // shift up all the pairs to fill the gap
+                var next_i      = i+1;
+                var next_key    = this.getFieldValue( 'key_field_'+next_i );
+                var next_value  = this.getFieldValue( 'value_field_'+next_i );
 
-                this.setFieldValue(last_key,    'key_field_'+indexToDelete);
-                this.setFieldValue(last_value,  'value_field_'+indexToDelete);
+                this.setFieldValue(next_key,    'key_field_'+i);
+                this.setFieldValue(next_value,  'value_field_'+i);
             }
-            this.removeInput('pair_'+counter_);
+            this.removeInput('pair_'+counter_);         // then remove the last one
         }
         this.length = counter_;
  //       this.setFieldValue(String(counter_), name+'_display');
