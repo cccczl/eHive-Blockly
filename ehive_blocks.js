@@ -45,11 +45,11 @@ Blockly.Blocks['dictionary2'] = {
         var counter_ = this.length;
         if(indexToDelete===undefined) {
             this.appendDummyInput('pair_'+counter_)
+                                // this counter-1 is still a puzzle for me. Isn't counter_ captured in a closure?
+                .appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.updateShape_(counter_-1); }) )
                 .appendField(new Blockly.FieldTextInput('key_'+counter_), 'key_field_'+counter_)
                 .appendField("⇒")
-                .appendField(new Blockly.FieldTextInput('value_'+counter_), 'value_field_'+counter_)
-                                // this counter-1 is still a puzzle for me. Isn't counter_ captured in a closure?
-                .appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.updateShape_(counter_-1); }) );
+                .appendField(new Blockly.FieldTextInput('value_'+counter_), 'value_field_'+counter_);
             this.moveInputBefore('pair_'+counter_, 'close_bracket');
             counter_++;
         } else {
