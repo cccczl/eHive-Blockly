@@ -12,7 +12,8 @@ Blockly.Blocks['pipeline'] = {
     this.appendValueInput("parameters")
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[parameters] →");
+        .appendField("[parameters]")
+        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewParameterBlock(); }) );
 
     this.appendDummyInput('analyses_label')
         .appendField("analyses:");
@@ -20,6 +21,18 @@ Blockly.Blocks['pipeline'] = {
         .setCheck(["conn_X_2_analysis"]);
 
     this.setDeletable(false);
+  },
+  addNewParameterBlock: function() {
+
+    if(! this.getInputTargetBlock('parameters')) {
+        var paramBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), 'dictionary2');
+        paramBlock.initSvg();
+        paramBlock.render();
+
+        var parentConnection = this.getInput('parameters').connection;
+        var childConnection = paramBlock.outputConnection;
+        parentConnection.connect(childConnection);
+    }
   }
 };
 
