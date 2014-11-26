@@ -1,6 +1,20 @@
 'use strict';
 
 
+Blockly.Block.prototype.addNewDictionaryBlock = function(dictionary_name) {
+
+    if(! this.getInputTargetBlock(dictionary_name)) {
+        var paramBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), 'dictionary2');
+        paramBlock.initSvg();
+        paramBlock.render();
+
+        var parentConnection = this.getInput(dictionary_name).connection;
+        var childConnection = paramBlock.outputConnection;
+        parentConnection.connect(childConnection);
+    }
+};
+
+
 Blockly.Blocks['pipeline'] = {
   init: function() {
     this.setColour(120);
@@ -13,7 +27,7 @@ Blockly.Blocks['pipeline'] = {
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[parameters]")
-        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewParameterBlock(); }) );
+        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('parameters'); }) );
 
     this.appendDummyInput('analyses_label')
         .appendField("analyses:");
@@ -21,18 +35,6 @@ Blockly.Blocks['pipeline'] = {
         .setCheck(["conn_X_2_analysis"]);
 
     this.setDeletable(false);
-  },
-  addNewParameterBlock: function() {
-
-    if(! this.getInputTargetBlock('parameters')) {
-        var paramBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), 'dictionary2');
-        paramBlock.initSvg();
-        paramBlock.render();
-
-        var parentConnection = this.getInput('parameters').connection;
-        var childConnection = paramBlock.outputConnection;
-        parentConnection.connect(childConnection);
-    }
   }
 };
 
@@ -102,7 +104,8 @@ Blockly.Blocks['analysis'] = {
     this.appendValueInput("parameters")
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[parameters] →");
+        .appendField("[parameters]")
+        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('parameters'); }) );
 
     this.appendValueInput("dataflows")
         .setCheck(["conn_dataflow_rule", "conn_next_semaphore_adaptor"])
@@ -112,7 +115,8 @@ Blockly.Blocks['analysis'] = {
     this.appendValueInput("template")
         .setCheck("conn_dictionary")
         .appendField(" ↓  branch #1")
-        .appendField("               [template] →");
+        .appendField("                      [template]")
+        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('template'); }) );
 
     this.setPreviousStatement(true, ["conn_between_analysis", "conn_X_2_analysis", "conn_from_dataflow"]);
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
@@ -204,7 +208,8 @@ Blockly.Blocks['dataflow_rule'] = {
         .setCheck("conn_dictionary")
         .appendField(" ⇊  branch #")
         .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number")
-        .appendField("        [template] →");
+        .appendField("                      [template]")
+        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('template'); }) );
 
     this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow"]);
     this.setInputsInline(false);
@@ -227,10 +232,8 @@ Blockly.Blocks['semaphored_dataflow'] = {
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Funnel");
 
-    this.appendValueInput("template")
-        .setCheck("conn_dictionary")
-        .appendField(" ↓  branch #1")
-        .appendField("               [template] →");
+    this.appendDummyInput()
+        .appendField(" ↓  branch #1");
 
     this.setPreviousStatement(true, ["conn_analysis_2_semaphore", "conn_from_semaphore_adaptor"]);
     this.setNextStatement(true, ["conn_X_2_analysis"]);
@@ -266,7 +269,8 @@ Blockly.Blocks['extra_semaphore'] = {
         .setCheck("conn_dictionary")
         .appendField(" ↓  branch #")
         .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number")
-        .appendField("        [template] →");
+        .appendField("                      [template]")
+        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock('template'); }) );
 
     this.setNextStatement(true, ["conn_X_2_analysis"]);
     this.setInputsInline(false);
