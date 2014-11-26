@@ -5,23 +5,29 @@ Blockly.Block.prototype.appendDictionaryInput = function(dictionary_name) {
     this.appendValueInput(dictionary_name)
         .setCheck("conn_dictionary")
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField('['+dictionary_name+']')
-        .appendField(new Blockly.FieldTextbutton('→', function() { this.sourceBlock_.addNewDictionaryBlock(dictionary_name); }) );
+        .appendField(new Blockly.FieldDropdown(
+                [['no '+dictionary_name, 'REMOVE'], [dictionary_name+': ', 'ADD']], function(option) {
+                    this.sourceBlock_.triggerDictionaryBlock(dictionary_name, option);
+                }
+        ));
 };
 
 
-Blockly.Block.prototype.addNewDictionaryBlock = function(dictionary_name) {
+Blockly.Block.prototype.triggerDictionaryBlock = function(dictionary_name, option) {
 
-    if(! this.getInputTargetBlock(dictionary_name)) {
-        var paramBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), 'dictionary2');
-        paramBlock.initSvg();
-        paramBlock.render();
+    var dictBlock = this.getInputTargetBlock(dictionary_name);
+    if(option=='REMOVE' && dictBlock) {
+        dictBlock.dispose(true, true);
+    } else if(option=='ADD' && !dictBlock) {
+        var dictBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), 'dictionary2');
+        dictBlock.initSvg();
+        dictBlock.render();
 
         var parentConnection = this.getInput(dictionary_name).connection;
-        var childConnection = paramBlock.outputConnection;
+        var childConnection = dictBlock.outputConnection;
         parentConnection.connect(childConnection);
     }
-};
+}
 
 
 Blockly.Blocks['pipeline'] = {
