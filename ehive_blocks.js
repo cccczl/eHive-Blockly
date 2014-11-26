@@ -46,7 +46,7 @@ Blockly.Blocks['dictionary2'] = {
         if(indexToDelete===undefined) {
             this.appendDummyInput('pair_'+counter_)
                 .appendField(new Blockly.FieldTextInput('key_'+counter_), 'key_field_'+counter_)
-                .appendField(" => ")
+                .appendField("⇒")
                 .appendField(new Blockly.FieldTextInput('value_'+counter_), 'value_field_'+counter_)
                                 // this counter-1 is still a puzzle for me. Isn't counter_ captured in a closure?
                 .appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.updateShape_(counter_-1); }) );
@@ -66,40 +66,6 @@ Blockly.Blocks['dictionary2'] = {
         }
         this.length = counter_;
  //       this.setFieldValue(String(counter_), name+'_display');
-  }
-};
-
-
-Blockly.Blocks['dictionary'] = {
-  init: function() {
-    this.setColour(20);
-    this.setOutput(true, ["conn_dictionary"]);
-
-    this.appendDummyInput('open_bracket')
-        .appendField(" { ");
-
-    this.appendStatementInput("dictionary_pairs")
-        .setCheck(["conn_kv_pair"]);
-
-    this.appendDummyInput('close_bracket')
-        .appendField(" } ");
-
-    this.setInputsInline(false);
-  }
-};
-
-
-Blockly.Blocks['key_value_pair'] = {
-  init: function() {
-    this.setColour(20);
-
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("(key)"), "key")
-        .appendField("⇒")
-        .appendField(new Blockly.FieldTextInput("(value)"), "value");
-
-    this.setPreviousStatement(true, ["conn_kv_pair"]);
-    this.setNextStatement(true, ["conn_kv_pair"]);
   }
 };
 

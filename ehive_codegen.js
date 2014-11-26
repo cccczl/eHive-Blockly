@@ -35,27 +35,6 @@ Blockly.PipeConfig['dictionary2'] = function(block) {
 }
 
 
-Blockly.PipeConfig['dictionary'] = function(block) {        // just pass it through
-
-    var dictionary_pairs            = this.generalBlockToObj( block.getInputTargetBlock( 'dictionary_pairs' ), false ) || {};
-
-    return dictionary_pairs;
-}
-
-
-Blockly.PipeConfig['key_value_pair'] = function(block) {    // special case where we want a dictionary, not a list
-
-    var pair_key    = block.getFieldValue( 'key' );
-    var pair_value  = block.getFieldValue( 'value' );
-
-    var nextBlock = block.getNextBlock();
-    var dict = nextBlock ? this.key_value_pair( nextBlock ) : {};
-    dict[pair_key] = pair_value;
-
-    return dict;
-}
-
-
     // three types of dataflow target that do not leave a direct trace in the chain
 Blockly.PipeConfig['analysis_ref'] = function(block) {
     return [] ;
