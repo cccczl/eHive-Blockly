@@ -9,22 +9,10 @@ Blockly.Blocks['pipeline'] = {
         .appendField("Pipeline")
         .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
 
-/*
-    this.appendDummyInput()
-        .appendField("parameters:")
-        .appendField(new Blockly.FieldCheckbox(false, function(option) {
-                    this.sourceBlock_.updateShape_(option, 'analyses_label');
-                }
-        ), 'parameters_checkbox');
-*/
-
-    var name = 'parameters';
-    this[name+'_counter'] = 0;
-
-    this.appendDummyInput(name+'_input')
-        .appendField(name+':', name+'_label')
-//        .appendField(String(this[name+'_counter']), name+'_display')
-        .appendField(new Blockly.FieldTextbutton('+', function() { this.sourceBlock_.updateShape_(name, undefined, 'analyses_label'); }) );
+    this.appendValueInput("parameters")
+        .setCheck("conn_dictionary")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("[parameters] →");
 
     this.appendDummyInput('analyses_label')
         .appendField("analyses:");
@@ -32,42 +20,51 @@ Blockly.Blocks['pipeline'] = {
         .setCheck(["conn_X_2_analysis"]);
 
     this.setDeletable(false);
-  },
-/*
-  mutationToDom: function() {
-    var container = document.createElement('mutation');
-    container.setAttribute('parameters_counter', this['parameters_counter']);
-    return container;
-  },
-  domToMutation: function(xmlElement) {
-    this.updateShape_(xmlElement.getAttribute('parameters_counter')', 'analyses_label');
-  },
-*/
-  updateShape_: function(name, indexToDelete, stickBefore) {
+  }
+};
 
-        var counter_ = this[name+'_counter'];
+
+Blockly.Blocks['dictionary2'] = {
+  length: 0,
+  init: function() {
+    this.setColour(20);
+    this.setOutput(true, ["conn_dictionary"]);
+
+    this.appendDummyInput('open_bracket')
+        .appendField(" { ")
+//        .appendField(String(this.length), name+'_display')
+        .appendField(new Blockly.FieldTextbutton('+', function() { this.sourceBlock_.updateShape_(undefined); }) );
+
+    this.appendDummyInput('close_bracket')
+        .appendField(" } ");
+
+    this.setInputsInline(false);
+  },
+  updateShape_: function(indexToDelete) {
+
+        var counter_ = this.length;
         if(indexToDelete===undefined) {
-            this.appendDummyInput(name+'_input_'+counter_)
-                .appendField(new Blockly.FieldTextInput('key_'+counter_), name+'_key_field_'+counter_)
+            this.appendDummyInput('pair_'+counter_)
+                .appendField(new Blockly.FieldTextInput('key_'+counter_), 'key_field_'+counter_)
                 .appendField(" => ")
-                .appendField(new Blockly.FieldTextInput('value_'+counter_), name+'_value_field_'+counter_)
+                .appendField(new Blockly.FieldTextInput('value_'+counter_), 'value_field_'+counter_)
                                 // this counter-1 is still a puzzle for me. Isn't counter_ captured in a closure?
-                .appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.updateShape_(name, counter_-1, 'analyses_label'); }) );
-            this.moveInputBefore(name+'_input_'+counter_, stickBefore);
+                .appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.updateShape_(counter_-1); }) );
+            this.moveInputBefore('pair_'+counter_, 'close_bracket');
             counter_++;
         } else {
             counter_--;
             if(indexToDelete!=counter_) {   // swap the one being deleted with the last one, then delete the last one
-                var last_key    = this.getFieldValue( name+'_key_field_'+counter_ );
-                var last_value  = this.getFieldValue( name+'_value_field_'+counter_ );
+                var last_key    = this.getFieldValue( 'key_field_'+counter_ );
+                var last_value  = this.getFieldValue( 'value_field_'+counter_ );
 
-                this.setFieldValue(last_key,    name+'_key_field_'+indexToDelete);
-                this.setFieldValue(last_value,  name+'_value_field_'+indexToDelete);
+                this.setFieldValue(last_key,    'key_field_'+indexToDelete);
+                this.setFieldValue(last_value,  'value_field_'+indexToDelete);
             }
-            this.removeInput(name+'_input_'+counter_);
+            this.removeInput('pair_'+counter_);
         }
-        this[name+'_counter'] = counter_;
-//        this.setFieldValue(String(counter_), name+'_display');
+        this.length = counter_;
+ //       this.setFieldValue(String(counter_), name+'_display');
   }
 };
 
@@ -122,12 +119,10 @@ Blockly.Blocks['analysis'] = {
         .appendField("module:")
         .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), "module");
 
-    this.appendDummyInput()
-        .appendField("parameters:")
-        .appendField(new Blockly.FieldCheckbox(false, function(option) {
-                    this.sourceBlock_.updateShape_(option, 'dataflows');
-                }
-        ), 'parameters_checkbox');
+    this.appendValueInput("parameters")
+        .setCheck("conn_dictionary")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("[parameters] →");
 
     this.appendValueInput("dataflows")
         .setCheck(["conn_dataflow_rule", "conn_next_semaphore_adaptor"])
@@ -152,35 +147,6 @@ Blockly.Blocks['analysis'] = {
 
   getAnalysis: function() {
     return this.getFieldValue('analysis_name');
-  },
-
-  mutationToDom: function() {
-    var container = document.createElement('mutation');
-    container.setAttribute('parameters_on', this.getFieldValue('parameters_checkbox') == 'TRUE');
-    return container;
-  },
-  domToMutation: function(xmlElement) {
-    this.updateShape_(xmlElement.getAttribute('parameters_on') == 'TRUE', 'dataflows');
-  },
-  updateShape_: function(option, stickBefore) {
-        var inputExists = this.getInput('parameters');
-        if(option == true) {
-            if(!inputExists) {
-                this.appendDummyInput('open_bracket')
-                    .appendField(" { ");
-                this.appendStatementInput('parameters')
-                    .setCheck(["conn_kv_pair"]);
-                this.appendDummyInput('close_bracket')
-                    .appendField(" } ");
-                this.moveInputBefore('open_bracket', stickBefore);
-                this.moveInputBefore('parameters', stickBefore);
-                this.moveInputBefore('close_bracket', stickBefore);
-            }
-        } else if(inputExists) {
-            this.removeInput('open_bracket');
-            this.removeInput('parameters');
-            this.removeInput('close_bracket');
-        }
   }
 };
 

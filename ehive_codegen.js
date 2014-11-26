@@ -4,29 +4,10 @@
 Blockly.PipeConfig = new Blockly.Generator('PipeConfig');
 
 
-Blockly.PipeConfig.built_in_dict = function(block, name) {
-    var counter_ = block[name+'_counter'];
-
-    var dictionary = {};
-
-    for (var i = 0; i<counter_; i++) {
-        var input       = block.getInput(name+'_input_'+counter_);
-        var pair_key    = block.getFieldValue( name+'_key_field_'+i );
-        var pair_value  = block.getFieldValue( name+'_value_field_'+i );
-
-        dictionary[pair_key] = pair_value;
-    }
-
-    return dictionary;
-}
-
-
 Blockly.PipeConfig['pipeline'] = function(block) {
 
     var pipeline_name               = block.getFieldValue( 'pipeline_name' );
-//    var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'parameters' ), false );           // null or dict
-    var pipeline_wide_parameters    = this.built_in_dict( block, 'parameters' );
-
+    var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'parameters' ), false );           // null or dict
     var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );     // null or list
 
     var pipeline_obj = {};
@@ -36,6 +17,21 @@ Blockly.PipeConfig['pipeline'] = function(block) {
     if(backbone_of_analyses && backbone_of_analyses.length) { pipeline_obj.pipeline_analyses        = backbone_of_analyses; }
 
     return pipeline_obj;
+}
+
+
+Blockly.PipeConfig['dictionary2'] = function(block) {
+
+    var dictionary = {};
+
+    for (var i = 0; i<block.length; i++) {
+        var pair_key    = block.getFieldValue( 'key_field_'+i );
+        var pair_value  = block.getFieldValue( 'value_field_'+i );
+
+        dictionary[pair_key] = pair_value;
+    }
+
+    return dictionary;
 }
 
 
