@@ -105,6 +105,7 @@
 
 	Blockly.inject(document.getElementById('blocklyDiv'), {
 		toolbox: document.getElementById('ehive_toolbox'), // mandatory
+        media: 'media/',    // to avoid reaching to the web for icons
 		sound: false,
 		collapse: true, comments: true, disable: false, scrollbars: true, trashcan: true // those ones are automatically true when there are categories
 	});
