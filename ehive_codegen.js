@@ -70,14 +70,14 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
     if( nextBlock) {    // record implicit dataflow
         if( nextBlock.type == 'semaphored_dataflow' ) {     // followed by a "backbone semaphore"
             var funnelBlock     = nextBlock.getNextBlock();
-            var semaphored_fan  = this.generalBlockToObj( nextBlock.getInputTargetBlock( 'semaphored_fan' ), true );    // a "horizontal" list
+            var fan  = this.generalBlockToObj( nextBlock.getInputTargetBlock( 'fan' ), true );    // a "horizontal" list
 
             if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {  // not expecting anything else to stick
 
                 var dataflow_rule_obj = this.toDataflowObj(1, template, funnelBlock, true); // since it is the backbone, always treat the target as analysis_ref
 
-                if(semaphored_fan.length) {       // otherwise silently skip the semaphore altogether
-                    dataflow_rule_obj.semaphored_fan = semaphored_fan;
+                if(fan.length) {       // otherwise silently skip the semaphore altogether
+                    dataflow_rule_obj.semaphore_fan = fan;
                 }
 
                 dataflows.push( dataflow_rule_obj );
@@ -103,18 +103,18 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
 
 Blockly.PipeConfig['extra_semaphore'] = function(block) {     // horizontal chain of dataflows is a list
 
-    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
+    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'more dataflows' ), true );  // a "horizontal" list
     var branch_number       = block.getFieldValue( 'branch_number' );
     var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );       // null or dict
-    var semaphored_fan      = this.generalBlockToObj( block.getInputTargetBlock( 'semaphored_fan' ), true );  // a "horizontal" list
+    var fan                 = this.generalBlockToObj( block.getInputTargetBlock( 'fan' ), true );             // a "horizontal" list
     var funnelBlock         = block.getNextBlock();
 
     if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {
 
         var dataflow_rule_obj = this.toDataflowObj(branch_number, template, funnelBlock, false);
 
-        if(semaphored_fan.length) {   // otherwise silently assume it is a non-semaphored dataflow
-            dataflow_rule_obj.semaphored_fan = semaphored_fan;
+        if(fan.length) {   // otherwise silently assume it is a non-semaphored dataflow
+            dataflow_rule_obj.semaphore_fan = fan;
         }
 
         dataflows.unshift( dataflow_rule_obj );
@@ -126,7 +126,7 @@ Blockly.PipeConfig['extra_semaphore'] = function(block) {     // horizontal chai
 
 Blockly.PipeConfig['dataflow_rule'] = function(block) {     // horizontal chain of dataflows is a list
 
-    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'more_dataflows' ), true );  // a "horizontal" list
+    var dataflows           = this.generalBlockToObj( block.getInputTargetBlock( 'more dataflows' ), true );  // a "horizontal" list
     var branch_number       = block.getFieldValue( 'branch_number' );
     var template            = this.generalBlockToObj( block.getInputTargetBlock( 'template' ), false );       // null or dict
 

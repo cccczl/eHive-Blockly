@@ -1,30 +1,59 @@
 'use strict';
 
 
-Blockly.Block.prototype.appendDictionaryInput = function(dictionary_name) {
-    this.appendValueInput(dictionary_name)
-        .setCheck("conn_dictionary")
+Blockly.FieldDropdown.prototype.setValue = function(newValue) {      // interfere with the way Dropdown updates its own label
+  this.value_ = newValue;
+  // Look up and display the human-readable text.
+  var options = this.getOptions_();
+  for (var x = 0; x < options.length; x++) {
+    // Options are tuples of human-readable text and language-neutral values.
+    if (options[x][1] == newValue) {
+      var shortValue = options[x][0].replace(/: \w*/, '');
+      this.setText(shortValue);
+      return;
+    }
+  }
+  // Value not found.  Add it, maybe it will become valid once set
+  // (like variable names).
+  this.setText(newValue);
+};
+
+
+
+Blockly.Block.prototype.appendSelectableInput = function(target_name, allowedBlocks) {
+    var dd_list = [
+        [ 'no '+target_name, '']
+    ];
+    if(allowedBlocks.length == 1) {
+        dd_list.push( [target_name+': ', allowedBlocks[0] ] );
+    } else {
+        for (var i = 0; i < allowedBlocks.length; i++) {
+            dd_list.push( [target_name+': '+allowedBlocks[i], allowedBlocks[i] ] );
+        }
+    }
+
+    this.appendValueInput(target_name)
+        .setCheck(allowedBlocks)
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField(new Blockly.FieldDropdown(
-                [['no '+dictionary_name, 'REMOVE'], [dictionary_name+': ', 'ADD']], function(option) {
-                    this.sourceBlock_.triggerDictionaryBlock(dictionary_name, option);
+        .appendField(new Blockly.FieldDropdown( dd_list, function(targetType) {
+                    this.sourceBlock_.triggerTargetBlock(target_name, targetType);
                 }
         ));
 };
 
 
-Blockly.Block.prototype.triggerDictionaryBlock = function(dictionary_name, option) {
+Blockly.Block.prototype.triggerTargetBlock = function(target_name, targetType) {
 
-    var dictBlock = this.getInputTargetBlock(dictionary_name);
-    if(option=='REMOVE' && dictBlock) {
-        dictBlock.dispose(true, true);
-    } else if(option=='ADD' && !dictBlock) {
-        var dictBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), 'dictionary2');
-        dictBlock.initSvg();
-        dictBlock.render();
+    var targetBlock = this.getInputTargetBlock(target_name);
+    if(targetType=='' && targetBlock) {             // asking for an empty targetType means REMOVE the block
+        targetBlock.dispose(true, true);
+    } else if(targetType!='' && !targetBlock) {
+        var targetBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), targetType);
+        targetBlock.initSvg();
+        targetBlock.render();
 
-        var parentConnection = this.getInput(dictionary_name).connection;
-        var childConnection = dictBlock.outputConnection;
+        var parentConnection = this.getInput(target_name).connection;
+        var childConnection = targetBlock.outputConnection;
         parentConnection.connect(childConnection);
     }
 }
@@ -36,9 +65,9 @@ Blockly.Blocks['pipeline'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Pipeline")
-        .appendField(new Blockly.FieldTextInput(''), "pipeline_name");
+        .appendField(new Blockly.FieldTextInput('pipeline_name'), "pipeline_name");
 
-    this.appendDictionaryInput('parameters');
+    this.appendSelectableInput('parameters', ['dictionary2']);
 
     this.appendDummyInput('analyses_label')
         .appendField("analyses:");
@@ -54,7 +83,7 @@ Blockly.Blocks['dictionary2'] = {
   length: 0,
   init: function() {
     this.setColour(20);
-    this.setOutput(true, ["conn_dictionary"]);
+    this.setOutput(true, ["dictionary2"]);
 
     this.appendDummyInput('open_bracket')
         .appendField(" { ")
@@ -112,14 +141,17 @@ Blockly.Blocks['analysis'] = {
         .appendField("module:")
         .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), "module");
 
-    this.appendDictionaryInput('parameters');
+    this.appendSelectableInput('parameters', ['dictionary2']);
 
+/*
     this.appendValueInput("dataflows")
-        .setCheck(["conn_dataflow_rule", "conn_next_semaphore_adaptor"])
+        .setCheck(["dataflow_rule", "extra_semaphore"])
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[dataflows] →");
+*/
+    this.appendSelectableInput('dataflows', ['extra_semaphore', 'dataflow_rule']);
 
-    this.appendDictionaryInput('template');
+    this.appendSelectableInput('template', ['dictionary2']);
 
     this.appendDummyInput()
         .appendField(" ↓  branch #1");
@@ -199,18 +231,21 @@ Blockly.Blocks['table'] = {
 Blockly.Blocks['dataflow_rule'] = {
   init: function() {
     this.setColour(260);
-    this.setOutput(true, ["conn_dataflow_rule", "conn_next_semaphore_adaptor"]);
+    this.setOutput(true, ["dataflow_rule", "extra_semaphore"]);
 
+/*
     this.appendValueInput("more_dataflows")
-        .setCheck(["conn_dataflow_rule"])
+        .setCheck(["dataflow_rule"])
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[more] →");
+*/
+    this.appendSelectableInput('more dataflows', ['dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Dataflow");
 
-    this.appendDictionaryInput('template');
+    this.appendSelectableInput('template', ['dictionary2']);
 
     this.appendDummyInput()
         .appendField(" ⇊  branch #")
@@ -228,10 +263,13 @@ Blockly.Blocks['semaphored_dataflow'] = {
     this.appendDummyInput()
         .appendField("Semaphore")
 
+/*
     this.appendValueInput("semaphored_fan")
-        .setCheck("conn_dataflow_rule")
+        .setCheck("dataflow_rule")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("Fan →");
+*/
+    this.appendSelectableInput('fan', ['dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
@@ -250,27 +288,33 @@ Blockly.Blocks['semaphored_dataflow'] = {
 Blockly.Blocks['extra_semaphore'] = {
   init: function() {
     this.setColour(330);
-    this.setOutput(true, ["conn_next_semaphore_adaptor"]);
+    this.setOutput(true, ["extra_semaphore"]);
 
+/*
     this.appendValueInput("more_dataflows")
-        .setCheck(["conn_dataflow_rule"])
+        .setCheck(["dataflow_rule"])
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("[more] →");
+*/
+    this.appendSelectableInput('more dataflows', ['extra_semaphore', 'dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Extra semaphore");
 
+/*
     this.appendValueInput("semaphored_fan")
-        .setCheck("conn_dataflow_rule")
+        .setCheck("dataflow_rule")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("Fan →");
+*/
+    this.appendSelectableInput('fan', ['dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Funnel");
 
-    this.appendDictionaryInput('template');
+    this.appendSelectableInput('template', ['dictionary2']);
 
     this.appendDummyInput()
         .appendField(" ↓  branch #")
