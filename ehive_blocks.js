@@ -75,8 +75,14 @@ Blockly.Blocks['pipeline'] = {
     this.appendValueInput('parameters')
         .appendSelector(['dictionary2']);
 
+/*
     this.appendStatementInput('pipeline_analyses')
         .appendSelector(['analysis']);
+*/
+    this.appendDummyInput()
+        .appendSelector(['analysis'])
+    this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
+    this.setInputsInline(false);
 
     this.setDeletable(false);
   }

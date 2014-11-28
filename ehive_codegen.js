@@ -8,13 +8,17 @@ Blockly.PipeConfig['pipeline'] = function(block) {
 
     var pipeline_name               = block.getFieldValue( 'pipeline_name' );
     var pipeline_wide_parameters    = this.generalBlockToObj( block.getInputTargetBlock( 'parameters' ), false );           // null or dict
-    var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );     // null or list
+//    var backbone_of_analyses        = this.generalBlockToObj( block.getInputTargetBlock( 'pipeline_analyses' ), true );     // null or list
+
+    var nextBlock                   = block.getNextBlock();
+    var backbone_of_analyses        = this.generalBlockToObj( nextBlock, true);
 
     var pipeline_obj = {};
 
     if(pipeline_name)                                       { pipeline_obj.pipeline_name            = pipeline_name; }
     if(pipeline_wide_parameters)                            { pipeline_obj.pipeline_wide_parameters = pipeline_wide_parameters; }
     if(backbone_of_analyses && backbone_of_analyses.length) { pipeline_obj.pipeline_analyses        = backbone_of_analyses; }
+
 
     return pipeline_obj;
 }
