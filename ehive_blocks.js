@@ -19,41 +19,46 @@ Blockly.FieldDropdown.prototype.setValue = function(newValue) {      // interfer
 };
 
 
+Blockly.Input.prototype.appendSelector = function(allowedBlocks) {
 
-Blockly.Block.prototype.appendSelectableInput = function(target_name, allowedBlocks) {
+    var targetName  = this.name;
+    var displayName = targetName || '↓';
+
     var dd_list = [
-        [ 'no '+target_name, '']
+        [ 'no '+displayName, ':REMOVE']
     ];
     if(allowedBlocks.length == 1) {
-        dd_list.push( [target_name+': ', allowedBlocks[0] ] );
+        dd_list.push( [displayName+': ', allowedBlocks[0] ] );
     } else {
         for (var i = 0; i < allowedBlocks.length; i++) {
-            dd_list.push( [target_name+': '+allowedBlocks[i], allowedBlocks[i] ] );
+            dd_list.push( [displayName+': '+allowedBlocks[i], allowedBlocks[i] ] );
         }
     }
 
-    this.appendValueInput(target_name)
-        .setCheck(allowedBlocks)
-        .setAlign(Blockly.ALIGN_RIGHT)
+    this//.setCheck(allowedBlocks)  // FIXME: we'll need to re-establish the connection rules somehow!
+        .setAlign( this.type == Blockly.INPUT_VALUE ? Blockly.ALIGN_RIGHT : Blockly.ALIGN_LEFT)
         .appendField(new Blockly.FieldDropdown( dd_list, function(targetType) {
-                    this.sourceBlock_.triggerTargetBlock(target_name, targetType);
+
+                    this.sourceBlock_.triggerTargetBlock(targetName, targetType);
                 }
         ));
+
+    return this;
 };
 
 
-Blockly.Block.prototype.triggerTargetBlock = function(target_name, targetType) {
+Blockly.Block.prototype.triggerTargetBlock = function(targetName, targetType) {     // universal version: can create any type of targetBlocks
 
-    var targetBlock = this.getInputTargetBlock(target_name);
-    if(targetType=='' && targetBlock) {             // asking for an empty targetType means REMOVE the block
-        targetBlock.dispose(true, true);
-    } else if(targetType!='' && !targetBlock) {
-        var targetBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), targetType);
+    var targetBlock = targetName ? this.getInputTargetBlock(targetName) : this.getNextBlock();              // named input or next
+    if(targetType==':REMOVE' && targetBlock) {
+        targetBlock.dispose(true, true);    // or targetBlock.unplug(...)
+    } else if(targetType!=':REMOVE' && !targetBlock) {
+        targetBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), targetType);
         targetBlock.initSvg();
         targetBlock.render();
 
-        var parentConnection = this.getInput(target_name).connection;
-        var childConnection = targetBlock.outputConnection;
+        var parentConnection = targetName ? this.getInput(targetName).connection : this.nextConnection;     // named input or next
+        var childConnection = targetBlock.outputConnection || targetBlock.previousConnection;               // vertical or horizontal
         parentConnection.connect(childConnection);
     }
 }
@@ -67,12 +72,11 @@ Blockly.Blocks['pipeline'] = {
         .appendField("Pipeline")
         .appendField(new Blockly.FieldTextInput('pipeline_name'), "pipeline_name");
 
-    this.appendSelectableInput('parameters', ['dictionary2']);
+    this.appendValueInput('parameters')
+        .appendSelector(['dictionary2']);
 
-    this.appendDummyInput('analyses_label')
-        .appendField("analyses:");
-    this.appendStatementInput("pipeline_analyses")
-        .setCheck(["conn_X_2_analysis"]);
+    this.appendStatementInput('pipeline_analyses')
+        .appendSelector(['analysis']);
 
     this.setDeletable(false);
   }
@@ -141,22 +145,20 @@ Blockly.Blocks['analysis'] = {
         .appendField("module:")
         .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), "module");
 
-    this.appendSelectableInput('parameters', ['dictionary2']);
+    this.appendValueInput('parameters')
+        .appendSelector(['dictionary2']);
 
-/*
-    this.appendValueInput("dataflows")
-        .setCheck(["dataflow_rule", "extra_semaphore"])
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[dataflows] →");
-*/
-    this.appendSelectableInput('dataflows', ['extra_semaphore', 'dataflow_rule']);
+    this.appendValueInput('dataflows')
+        .appendSelector(['extra_semaphore', 'dataflow_rule']);
 
-    this.appendSelectableInput('template', ['dictionary2']);
+    this.appendValueInput('template')
+        .appendSelector(['dictionary2']);
 
     this.appendDummyInput()
-        .appendField(" ↓  branch #1");
+        .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'])
+        .appendField(" branch #1");
 
-    this.setPreviousStatement(true, ["conn_between_analysis", "conn_X_2_analysis", "conn_from_dataflow"]);
+    this.setPreviousStatement(true, ["conn_between_analysis", "analysis", "conn_from_dataflow"]);
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
     this.setInputsInline(false);
   },
@@ -182,7 +184,7 @@ Blockly.Blocks['analysis_ref'] = {
         .appendField(" ⤷  to Analysis")
         .appendField(new Blockly.FieldTextInput( '' ), "analysis_name");
 
-    this.setPreviousStatement(true, ["conn_analysis_2_X", "conn_X_2_analysis"]);
+    this.setPreviousStatement(true, ["conn_analysis_2_X", "analysis"]);
   }
 };
 
@@ -233,23 +235,26 @@ Blockly.Blocks['dataflow_rule'] = {
     this.setColour(260);
     this.setOutput(true, ["dataflow_rule", "extra_semaphore"]);
 
-/*
-    this.appendValueInput("more_dataflows")
-        .setCheck(["dataflow_rule"])
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[more] →");
-*/
-    this.appendSelectableInput('more dataflows', ['dataflow_rule']);
+    this.appendValueInput('more dataflows')
+        .appendSelector(['dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Dataflow");
 
-    this.appendSelectableInput('template', ['dictionary2']);
+    this.appendValueInput('template')
+        .appendSelector(['dictionary2']);
 
+    this.appendDummyInput()
+        .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'])
+        .appendField(" branch #")
+        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
+
+/*
     this.appendDummyInput()
         .appendField(" ⇊  branch #")
         .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
+*/
 
     this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow"]);
     this.setInputsInline(false);
@@ -263,23 +268,19 @@ Blockly.Blocks['semaphored_dataflow'] = {
     this.appendDummyInput()
         .appendField("Semaphore")
 
-/*
-    this.appendValueInput("semaphored_fan")
-        .setCheck("dataflow_rule")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("Fan →");
-*/
-    this.appendSelectableInput('fan', ['dataflow_rule']);
+    this.appendValueInput('fan')
+        .appendSelector(['dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Funnel");
 
     this.appendDummyInput()
-        .appendField(" ↓  branch #1");
+        .appendSelector(['analysis','analysis_ref'])
+        .appendField(" branch #1");
 
     this.setPreviousStatement(true, ["conn_analysis_2_semaphore", "conn_from_semaphore_adaptor"]);
-    this.setNextStatement(true, ["conn_X_2_analysis"]);
+    this.setNextStatement(true, ["analysis"]);
     this.setInputsInline(false);
   }
 };
@@ -290,37 +291,29 @@ Blockly.Blocks['extra_semaphore'] = {
     this.setColour(330);
     this.setOutput(true, ["extra_semaphore"]);
 
-/*
-    this.appendValueInput("more_dataflows")
-        .setCheck(["dataflow_rule"])
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("[more] →");
-*/
-    this.appendSelectableInput('more dataflows', ['extra_semaphore', 'dataflow_rule']);
+    this.appendValueInput('more dataflows')
+        .appendSelector(['extra_semaphore', 'dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Extra semaphore");
 
-/*
-    this.appendValueInput("semaphored_fan")
-        .setCheck("dataflow_rule")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("Fan →");
-*/
-    this.appendSelectableInput('fan', ['dataflow_rule']);
+    this.appendValueInput('fan')
+        .appendSelector(['dataflow_rule']);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_LEFT)
         .appendField("Funnel");
 
-    this.appendSelectableInput('template', ['dictionary2']);
+    this.appendValueInput('template')
+        .appendSelector(['dictionary2']);
 
     this.appendDummyInput()
-        .appendField(" ↓  branch #")
+        .appendSelector(['analysis','analysis_ref'])
+        .appendField(" branch #")
         .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number");
 
-    this.setNextStatement(true, ["conn_X_2_analysis"]);
+    this.setNextStatement(true, ["analysis"]);
     this.setInputsInline(false);
   }
 };
