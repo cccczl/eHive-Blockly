@@ -21,11 +21,12 @@ Blockly.FieldDropdown.prototype.setValue = function(newValue) {      // interfer
 
 Blockly.Input.prototype.appendSelector = function(allowedBlocks) {
 
-    var targetName  = this.name;
-    var displayName = targetName || '↓';
+    var targetName      = this.name;
+    var displayName     = targetName || '↓';
+    var noDisplayName   = targetName ? 'no '+displayName : '⏚';
 
     var dd_list = [
-        [ 'no '+displayName, ':REMOVE']
+        [ noDisplayName, ':REMOVE']
     ];
     if(allowedBlocks.length == 1) {
         dd_list.push( [displayName+': ', allowedBlocks[0] ] );
