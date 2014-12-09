@@ -230,18 +230,19 @@ Blockly.PipeConfig.generalBlockToObj = function(block, returnarray) {
 }
 
 
-Blockly.PipeConfig.workspaceToJSON = function(workspace, onlyPipelineBlock) {
+Blockly.PipeConfig.fromWorkspace = function(workspace) {
 
     var json_text = '';
 
-    var blocks = onlyPipelineBlock
-        ? [ workspace.getBlockById( 1 ) ]   // assume pipeline block has been put first and has block.id=1
-        : workspace.getTopBlocks(true);
+    var top_blocks = workspace.getTopBlocks(false);
+    for(var i in top_blocks) {
+        var top_block = top_blocks[i];
 
-    for (var i = 0, block; block = blocks[i]; i++) {
+        if(top_block.type == 'pipeline') {
+            var json_structure = this.generalBlockToObj( top_block );
 
-        var obj = this.generalBlockToObj( block, false );
-        json_text += JSON.stringify(obj, null, 4) + '\n\n';
+            json_text += JSON.stringify(json_structure, null, 4) + '\n\n';
+        }
     }
 
     return json_text;

@@ -40,6 +40,7 @@
     <div style="margin-left: 74%; width: 24%; height: 100%"><textarea id=json_area style="height: 100%; width: 100%"></textarea></div>
   </div>
 
+<!--
     <xml id="ehive_toolbox" style="display: none">
     <category name="Analyses">
     <block type="analysis"></block>
@@ -56,8 +57,8 @@
     <block type="dictionary2"></block>
     </category>
     </xml>
+-->
 
-<!--
     <xml id="ehive_toolbox" style="display: none">
     <block type="analysis"></block>
     <block type="analysis_ref"></block>
@@ -68,11 +69,10 @@
     <block type="extra_semaphore"></block>
     <block type="dictionary2"></block>
     </xml>
--->
 
   <script>
     function updateJSONarea() {
-        document.getElementById('json_area').value = Blockly.PipeConfig.workspaceToJSON(Blockly.mainWorkspace, true); // true means "code is generated only for the pipeline block and its descendants"
+        document.getElementById('json_area').value = Blockly.PipeConfig.fromWorkspace( Blockly.getMainWorkspace() );
     }
     function loadXMLIntoBlockly(xmlText) {
         var dom = Blockly.Xml.textToDom( xmlText );
