@@ -1,70 +1,6 @@
 'use strict';
 
 
-Blockly.FieldDropdown.prototype.setValue = function(newValue) {      // interfere with the way Dropdown updates its own label
-  this.value_ = newValue;
-  // Look up and display the human-readable text.
-  var options = this.getOptions_();
-  for (var x = 0; x < options.length; x++) {
-    // Options are tuples of human-readable text and language-neutral values.
-    if (options[x][1] == newValue) {
-      var shortValue = options[x][0].replace(/: \w*/, '');
-      this.setText(shortValue);
-      return;
-    }
-  }
-  // Value not found.  Add it, maybe it will become valid once set
-  // (like variable names).
-  this.setText(newValue);
-};
-
-
-Blockly.Input.prototype.appendSelector = function(allowedBlocks) {
-
-    var targetName      = this.name;
-    var displayName     = targetName || '↓';
-    var noDisplayName   = targetName ? 'no '+displayName : '⏚';
-
-    var dd_list = [
-        [ noDisplayName, ':REMOVE']
-    ];
-    if(allowedBlocks.length == 1) {
-        dd_list.push( [displayName+': ', allowedBlocks[0] ] );
-    } else {
-        for (var i = 0; i < allowedBlocks.length; i++) {
-            dd_list.push( [displayName+': '+allowedBlocks[i], allowedBlocks[i] ] );
-        }
-    }
-
-    this//.setCheck(allowedBlocks)  // FIXME: we'll need to re-establish the connection rules somehow!
-        .setAlign( this.type == Blockly.INPUT_VALUE ? Blockly.ALIGN_RIGHT : Blockly.ALIGN_LEFT)
-        .appendField(new Blockly.FieldDropdown( dd_list, function(targetType) {
-
-                    this.sourceBlock_.triggerTargetBlock(targetName, targetType);
-                }
-        ));
-
-    return this;
-};
-
-
-Blockly.Block.prototype.triggerTargetBlock = function(targetName, targetType) {     // universal version: can create any type of targetBlocks
-
-    var targetBlock = targetName ? this.getInputTargetBlock(targetName) : this.getNextBlock();              // named input or next
-    if(targetType==':REMOVE' && targetBlock) {
-        targetBlock.dispose(true, true);    // or targetBlock.unplug(...)
-    } else if(targetType!=':REMOVE' && !targetBlock) {
-        targetBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), targetType);
-        targetBlock.initSvg();
-        targetBlock.render();
-
-        var parentConnection = targetName ? this.getInput(targetName).connection : this.nextConnection;     // named input or next
-        var childConnection = targetBlock.outputConnection || targetBlock.previousConnection;               // vertical or horizontal
-        parentConnection.connect(childConnection);
-    }
-}
-
-
 Blockly.Blocks['pipeline'] = {
   init: function() {
     this.setColour(120);
@@ -81,7 +17,7 @@ Blockly.Blocks['pipeline'] = {
         .appendSelector(['analysis']);
 */
     this.appendDummyInput()
-        .appendSelector(['analysis'])
+        .appendSelector(['analysis'], '↓', '⏚')
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
     this.setInputsInline(false);
 
@@ -162,7 +98,7 @@ Blockly.Blocks['analysis'] = {
         .appendSelector(['dictionary2']);
 
     this.appendDummyInput()
-        .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'])
+        .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'], '↓', '⏚')
         .appendField(" branch #1");
 
     this.setPreviousStatement(true, ["conn_between_analysis", "analysis", "conn_from_dataflow"]);
@@ -253,8 +189,7 @@ Blockly.Blocks['dataflow_rule'] = {
         .appendSelector(['dictionary2']);
 
     this.appendDummyInput()
-        .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'])
-        .appendField(" branch #")
+        .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'], '↓', '⏚')
         .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
 
 /*
@@ -283,7 +218,7 @@ Blockly.Blocks['semaphored_dataflow'] = {
         .appendField("Funnel");
 
     this.appendDummyInput()
-        .appendSelector(['analysis','analysis_ref'])
+        .appendSelector(['analysis','analysis_ref'], '↓', '⏚')
         .appendField(" branch #1");
 
     this.setPreviousStatement(true, ["conn_analysis_2_semaphore", "conn_from_semaphore_adaptor"]);
@@ -316,7 +251,7 @@ Blockly.Blocks['extra_semaphore'] = {
         .appendSelector(['dictionary2']);
 
     this.appendDummyInput()
-        .appendSelector(['analysis','analysis_ref'])
+        .appendSelector(['analysis','analysis_ref'], '↓', '⏚')
         .appendField(" branch #")
         .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number");
 
