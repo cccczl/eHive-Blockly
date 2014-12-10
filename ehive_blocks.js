@@ -2,20 +2,18 @@
 
 
 Blockly.Blocks['pipeline'] = {
+  default_name: 'pipeline name',
+
   init: function() {
     this.setColour(120);
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Pipeline")
-        .appendField(new Blockly.FieldTextInput('pipeline_name'), "pipeline_name");
+        .appendField(new Blockly.FieldTextInput( this.default_name ), "pipeline_name");
 
     this.appendValueInput('parameters')
         .appendSelector(['dictionary2']);
 
-/*
-    this.appendStatementInput('pipeline_analyses')
-        .appendSelector(['analysis']);
-*/
     this.appendDummyInput()
         .appendSelector(['analysis'], '↓', '⏚')
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
@@ -77,9 +75,6 @@ Blockly.Blocks['analysis'] = {
 
   init: function() {
     this.setColour(210);
-
-    // init() is called much more frequently than just to create a visible widget,
-    //        so it's not a good place to count the widgets placed onto the workspace.
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)

@@ -70,14 +70,20 @@
     <block type="dictionary2"></block>
     </xml>
 
+    <xml id="initial_workspace_state" style="display: none">
+        <block type="pipeline" x="15" y="15">
+            <field name="pipeline_name">pipeline name</field>
+            <next>
+                <block type="analysis">
+                    <field name="analysis_name">first_analysis</field>
+                </block>
+            </next>
+        </block>
+    </xml>
+
   <script>
     function updateJSONarea() {
         document.getElementById('json_area').value = Blockly.PipeConfig.fromWorkspace( Blockly.getMainWorkspace() );
-    }
-    function loadXMLIntoBlockly(xmlText) {
-        var dom = Blockly.Xml.textToDom( xmlText );
-        Blockly.mainWorkspace.clear();
-        Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
     }
 
 	Blockly.inject(document.getElementById('blocklyDiv'), {
@@ -87,8 +93,9 @@
 		collapse: true, comments: true, disable: false, scrollbars: true, trashcan: true // those ones are automatically true when there are categories
 	});
 
-	var initial_workspace_state = '<xml xmlns="http://www.w3.org/1999/xhtml"> <block type="pipeline" x="15" y="15"> <field name="pipeline_name"></field> </block> </xml>';
-	loadXMLIntoBlockly(initial_workspace_state);
+    Blockly.mainWorkspace.clear();
+    Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, document.getElementById('initial_workspace_state'));
+
     Blockly.addChangeListener(updateJSONarea);
   </script>
 
