@@ -32,7 +32,6 @@ Blockly.Blocks['dictionary2'] = {
 
     this.appendDummyInput('open_bracket')
         .appendField(" { ")
-//        .appendField(String(this.length), name+'_display')
         .appendField(new Blockly.FieldTextbutton('+', function() { this.sourceBlock_.updateShape_(undefined); }) );
 
     this.appendDummyInput('close_bracket')
@@ -65,7 +64,6 @@ Blockly.Blocks['dictionary2'] = {
             this.removeInput('pair_'+counter_);         // then remove the last one
         }
         this.length = counter_;
- //       this.setFieldValue(String(counter_), name+'_display');
   }
 };
 
@@ -126,9 +124,20 @@ Blockly.Blocks['analysis_ref'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField(" ⤷  to Analysis")
-        .appendField(new Blockly.FieldTextInput( this.default_name ), "analysis_name");
+        .appendField(new Blockly.FieldDropdown( this.analysesMenuInit ), 'ddl_analyses' );
 
     this.setPreviousStatement(true, ["conn_analysis_2_X", "analysis"]);
+  },
+
+  analysesMenuInit: function() {
+    var list_of_analyses    = Blockly.Data.Analyses.getAllNames();
+    var dd_list             = [];
+
+    for(var i in list_of_analyses) {
+        dd_list.push( [ list_of_analyses[i], list_of_analyses[i] ] );
+    }
+
+    return dd_list.length ? dd_list : [[ 'first_analysis', 'first_analysis']];  // the vanilla DDL doesn't support an empty list (crashes)
   }
 };
 
