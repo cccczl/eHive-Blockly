@@ -10,10 +10,13 @@ Blockly.Block.prototype.onMouseUp_ = function(e) {
     original_onMouseUp_.call(this, e);
 
     if (Blockly.selected) {
-        var rootBlock = Blockly.selected.getRootBlock();
+        var onDrop = Blockly.selected.onDrop;
+        if(onDrop) {
+            onDrop.call(Blockly.selected);
+        }
 
-        var isDisabled = (rootBlock.type != 'pipeline');
-
+        var rootBlock   = Blockly.selected.getRootBlock();
+        var isDisabled  = (rootBlock.type != 'pipeline');
         var descendants = Blockly.selected.getDescendants();
         for(var i in descendants) {
             descendants[i].setDisabled(isDisabled);
@@ -83,8 +86,13 @@ Blockly.Block.prototype.toggleTargetBlock = function(input, targetType) {     //
             return targetBlock.type;
         } else {            // add a new kind of block:
             targetBlock = Blockly.Block.obtain(Blockly.getMainWorkspace(), targetType);
+            var initValues = targetBlock.initValues;
+            if(initValues) {
+                initValues.call(targetBlock);
+            }
             targetBlock.initSvg();
             targetBlock.render();
+
 
             var parentConnection = (input.type == Blockly.DUMMY_INPUT) ? this.nextConnection : this.getInput(input.name).connection;
             var childConnection = targetBlock.outputConnection || targetBlock.previousConnection;          // vertical or horizontal

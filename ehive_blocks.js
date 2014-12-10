@@ -73,6 +73,8 @@ Blockly.Blocks['dictionary2'] = {
 
 
 Blockly.Blocks['analysis'] = {
+  default_name: 'analysis name',
+
   init: function() {
     this.setColour(210);
 
@@ -82,7 +84,7 @@ Blockly.Blocks['analysis'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Analysis")
-        .appendField(new Blockly.FieldTextInput( '' ), "analysis_name");
+        .appendField(new Blockly.FieldTextInput( this.default_name ), "analysis_name");
 
     this.appendDummyInput()
         .appendField("module:")
@@ -104,10 +106,12 @@ Blockly.Blocks['analysis'] = {
     this.setPreviousStatement(true, ["conn_between_analysis", "analysis", "conn_from_dataflow"]);
     this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
     this.setInputsInline(false);
+
+    this.onDrop = this.initValues;
   },
 
-  onchange: function() {
-    if(this.workspace && (this.getFieldValue('analysis_name') == '' )) {
+  initValues: function() {
+    if((this.workspace == Blockly.getMainWorkspace()) && (this.getFieldValue('analysis_name') == this.default_name )) {
         this.setFieldValue('analysis_' + (++Blockly.Data.Analyses.counter), 'analysis_name');   // unfortunately, the parameters were in the wrong order
     }
   },
@@ -119,13 +123,15 @@ Blockly.Blocks['analysis'] = {
 
 
 Blockly.Blocks['analysis_ref'] = {
+  default_name: 'analysis name',
+
   init: function() {
     this.setColour(210);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField(" ⤷  to Analysis")
-        .appendField(new Blockly.FieldTextInput( '' ), "analysis_name");
+        .appendField(new Blockly.FieldTextInput( this.default_name ), "analysis_name");
 
     this.setPreviousStatement(true, ["conn_analysis_2_X", "analysis"]);
   }
@@ -133,6 +139,8 @@ Blockly.Blocks['analysis_ref'] = {
 
 
 Blockly.Blocks['accu'] = {
+  default_name: 'variable name',
+
   init: function() {
     this.setColour(210);
 
@@ -142,7 +150,7 @@ Blockly.Blocks['accu'] = {
 
     this.appendDummyInput()
         .appendField("instances of variable")
-        .appendField(new Blockly.FieldTextInput("foo"), "struct_name")
+        .appendField(new Blockly.FieldTextInput( this.default_name ), "struct_name")
         .appendField("as")
         .appendField(new Blockly.FieldTextInput("[]"), "signature_template");
 
@@ -160,13 +168,15 @@ Blockly.Blocks['accu'] = {
 
 
 Blockly.Blocks['table'] = {
+  default_name: 'table name',
+
   init: function() {
     this.setColour(210);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Store in table")
-        .appendField(new Blockly.FieldTextInput("(table_name)"), "table_name");
+        .appendField(new Blockly.FieldTextInput( this.default_name ), "table_name");
 
     this.setPreviousStatement(true, ['conn_analysis_2_X', "conn_from_dataflow"]);
   }
@@ -190,6 +200,7 @@ Blockly.Blocks['dataflow_rule'] = {
 
     this.appendDummyInput()
         .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'], '↓', '⏚')
+        .appendField(" branch #")
         .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
 
 /*
