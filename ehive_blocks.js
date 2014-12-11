@@ -34,37 +34,40 @@ Blockly.Blocks['dictionary'] = {
 
     this.appendDummyInput('open_bracket')
         .appendField(" { ")
-        .appendField(new Blockly.FieldTextbutton('+', function() { this.sourceBlock_.updateShape_(undefined); }) );
+        .appendField(new Blockly.FieldTextbutton('+', function() { this.sourceBlock_.appendKeyValuePair(); }) );
 
     this.appendDummyInput('close_bracket')
         .appendField(" } ");
 
   },
-  updateShape_: function(indexToDelete) {
 
-        var counter_ = this.length;
-        if(indexToDelete===undefined) {
-            this.appendDummyInput('pair_'+counter_)
-                                // this counter-1 is still a puzzle for me. Isn't counter_ captured in a closure?
-                .appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.updateShape_(counter_-1); }) )
-                .appendField(new Blockly.FieldTextInput('key_'+counter_), 'key_field_'+counter_)
-                .appendField("⇒")
-                .appendField(new Blockly.FieldTextInput('value_'+counter_), 'value_field_'+counter_);
-            this.moveInputBefore('pair_'+counter_, 'close_bracket');
-            counter_++;
-        } else {
-            counter_--;
-            for(var i=indexToDelete; i<counter_; i++) { // shift up all the pairs to fill the gap
-                var next_i      = i+1;
-                var next_key    = this.getFieldValue( 'key_field_'+next_i );
-                var next_value  = this.getFieldValue( 'value_field_'+next_i );
+  appendKeyValuePair: function() {
 
-                this.setFieldValue(next_key,    'key_field_'+i);
-                this.setFieldValue(next_value,  'value_field_'+i);
-            }
-            this.removeInput('pair_'+counter_);         // then remove the last one
+        var lastIndex = this.length++;
+
+        var appended_input = this.appendDummyInput('element_'+lastIndex);
+        appended_input.appendField(new Blockly.FieldTextbutton('–', function() { this.sourceBlock_.deleteKeyValuePair(lastIndex); }) )
+            .appendField(new Blockly.FieldTextInput('key_'+lastIndex), 'key_field_'+lastIndex)
+            .appendField("⇒")
+            .appendField(new Blockly.FieldTextInput('value_'+lastIndex), 'value_field_'+lastIndex);
+
+        this.moveInputBefore('element_'+lastIndex, 'close_bracket');
+
+        return appended_input;
+  },
+
+  deleteKeyValuePair: function(indexToDelete) {
+
+        var lastIndex = --this.length;
+        for(var i=indexToDelete; i<lastIndex; i++) { // shift up all the pairs to fill the gap
+            var next_i      = i+1;
+            var next_key    = this.getFieldValue( 'key_field_'+next_i );
+            var next_value  = this.getFieldValue( 'value_field_'+next_i );
+
+            this.setFieldValue(next_key,    'key_field_'+i);
+            this.setFieldValue(next_value,  'value_field_'+i);
         }
-        this.length = counter_;
+        this.removeInput('element_'+lastIndex);         // then remove the last one
   }
 };
 
