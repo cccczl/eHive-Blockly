@@ -17,6 +17,19 @@
     <script type="text/javascript" src="ehive_data.js"></script>
     <script type="text/javascript" src="ehive_blocks.js"></script>
     <script type="text/javascript" src="ehive_codegen.js"></script>
+    <script type="text/javascript" src="ehive_2blocks.js"></script>
+
+    <script>
+
+        function updateJSONarea() {
+            document.getElementById('json_area').value = Blockly.PipeConfig.fromWorkspace( Blockly.getMainWorkspace() );
+        }
+
+        function interpretJSONarea() {
+            Blockly.PipeConfig.toWorkspace( document.getElementById('json_area').value, Blockly.getMainWorkspace() );
+        }
+
+    </script>
 
   <style>
     body {
@@ -37,11 +50,8 @@
 
   <div style="height: 900px">
     <div id="blocklyDiv" style="float: left; width: 74%; height: 100%"></div>
-    <div style="margin-left: 74%; width: 24%; height: 100%"><textarea id=json_area style="height: 100%; width: 100%"></textarea></div>
-  </div>
 
-<!--
-    <xml id="ehive_toolbox" style="display: none">
+    <xml id="ehive_complex_toolbox" style="display: none">
     <category name="Analyses">
     <block type="analysis"></block>
     <block type="analysis_ref"></block>
@@ -57,9 +67,8 @@
     <block type="dictionary"></block>
     </category>
     </xml>
--->
 
-    <xml id="ehive_toolbox" style="display: none">
+    <xml id="ehive_simple_toolbox" style="display: none">
     <block type="analysis"></block>
     <block type="analysis_ref"></block>
     <block type="table"></block>
@@ -81,13 +90,17 @@
         </block>
     </xml>
 
+    <div style="margin-left: 74%; width: 24%; height: 100%">
+        <button onclick='interpretJSONarea()'>interpret JSON from the textarea below</button>
+        <textarea id=json_area style="height: 95%; width: 100%"></textarea>
+    </div>
+  </div>
+
   <script>
-    function updateJSONarea() {
-        document.getElementById('json_area').value = Blockly.PipeConfig.fromWorkspace( Blockly.getMainWorkspace() );
-    }
 
 	Blockly.inject(document.getElementById('blocklyDiv'), {
-		toolbox: document.getElementById('ehive_toolbox'), // mandatory
+		toolbox: document.getElementById('ehive_simple_toolbox'),
+//		toolbox: document.getElementById('ehive_complex_toolbox'),
         media: 'media/',    // to avoid reaching to the web for icons
 		sound: false,
 		collapse: true, comments: true, disable: false, scrollbars: true, trashcan: true // those ones are automatically true when there are categories
@@ -97,6 +110,7 @@
     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, document.getElementById('initial_workspace_state'));
 
     Blockly.addChangeListener(updateJSONarea);
+
   </script>
 
 </body>
