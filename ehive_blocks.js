@@ -6,6 +6,8 @@ Blockly.Blocks['pipeline'] = {
 
   init: function() {
     this.setColour(120);
+    this.setInputsInline(false);
+
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Pipeline")
@@ -16,8 +18,7 @@ Blockly.Blocks['pipeline'] = {
 
     this.appendDummyInput()
         .appendSelector(['analysis'], '↓', '⏚')
-    this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
-    this.setInputsInline(false);
+    this.setNextStatement(true, ['analysis']);
 
     this.setDeletable(false);
   }
@@ -27,8 +28,10 @@ Blockly.Blocks['pipeline'] = {
 Blockly.Blocks['dictionary2'] = {
   length: 0,
   init: function() {
+    this.setOutput(true, ['dictionary2']);
+
     this.setColour(20);
-    this.setOutput(true, ["dictionary2"]);
+    this.setInputsInline(false);
 
     this.appendDummyInput('open_bracket')
         .appendField(" { ")
@@ -37,7 +40,6 @@ Blockly.Blocks['dictionary2'] = {
     this.appendDummyInput('close_bracket')
         .appendField(" } ");
 
-    this.setInputsInline(false);
   },
   updateShape_: function(indexToDelete) {
 
@@ -72,7 +74,10 @@ Blockly.Blocks['analysis'] = {
   default_name: 'analysis name',
 
   init: function() {
+    this.setPreviousStatement(true, ['analysis']);
+
     this.setColour(210);
+    this.setInputsInline(false);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
@@ -96,9 +101,8 @@ Blockly.Blocks['analysis'] = {
         .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'], '↓', '⏚')
         .appendField(" branch #1");
 
-    this.setPreviousStatement(true, ["conn_between_analysis", "analysis", "conn_from_dataflow"]);
-    this.setNextStatement(true, ["conn_between_analysis", "conn_analysis_2_semaphore", "conn_analysis_2_X"]);
-    this.setInputsInline(false);
+    this.setNextStatement(true, ['analysis', 'analysis_ref', 'accu', 'table', 'semaphored_dataflow']);
+
 
     this.onDrop = this.initValues;
   },
@@ -119,14 +123,15 @@ Blockly.Blocks['analysis_ref'] = {
   default_name: 'analysis name',
 
   init: function() {
+    this.setPreviousStatement(true, ['analysis_ref']);
+
     this.setColour(210);
+    this.setInputsInline(false);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField(" ⤷  to Analysis")
         .appendField(new Blockly.FieldDropdown( this.analysesMenuInit ), 'ddl_analyses' );
-
-    this.setPreviousStatement(true, ["conn_analysis_2_X", "analysis"]);
   },
 
   analysesMenuInit: function() {
@@ -146,7 +151,10 @@ Blockly.Blocks['accu'] = {
   default_name: 'variable name',
 
   init: function() {
+    this.setPreviousStatement(true, ['accu']);
+
     this.setColour(210);
+    this.setInputsInline(false);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
@@ -165,8 +173,6 @@ Blockly.Blocks['accu'] = {
         //.appendField("←────∑");
         //.appendField("↙+");
         //.appendField("←");
-
-    this.setPreviousStatement(true, ['conn_analysis_2_X', "conn_from_dataflow"]);
   }
 };
 
@@ -175,22 +181,25 @@ Blockly.Blocks['table'] = {
   default_name: 'table name',
 
   init: function() {
+    this.setPreviousStatement(true, ['table']);
+
     this.setColour(210);
+    this.setInputsInline(false);
 
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Store in table")
         .appendField(new Blockly.FieldTextInput( this.default_name ), "table_name");
-
-    this.setPreviousStatement(true, ['conn_analysis_2_X', "conn_from_dataflow"]);
   }
 };
 
 
 Blockly.Blocks['dataflow_rule'] = {
   init: function() {
+    this.setOutput(true, ['dataflow_rule']);
+
     this.setColour(260);
-    this.setOutput(true, ["dataflow_rule", "extra_semaphore"]);
+    this.setInputsInline(false);
 
     this.appendValueInput('more dataflows')
         .appendSelector(['dataflow_rule']);
@@ -213,15 +222,18 @@ Blockly.Blocks['dataflow_rule'] = {
         .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
 */
 
-    this.setNextStatement(true, ["conn_analysis_2_X", "conn_from_dataflow"]);
-    this.setInputsInline(false);
+    this.setNextStatement(true, ['analysis', 'analysis_ref']);
   }
 };
 
 
 Blockly.Blocks['semaphored_dataflow'] = {
   init: function() {
+    this.setPreviousStatement(true, ['semaphored_dataflow']);
+
     this.setColour(330);
+    this.setInputsInline(false);
+
     this.appendDummyInput()
         .appendField("Semaphore")
 
@@ -236,17 +248,17 @@ Blockly.Blocks['semaphored_dataflow'] = {
         .appendSelector(['analysis','analysis_ref'], '↓', '⏚')
         .appendField(" branch #1");
 
-    this.setPreviousStatement(true, ["conn_analysis_2_semaphore", "conn_from_semaphore_adaptor"]);
-    this.setNextStatement(true, ["analysis"]);
-    this.setInputsInline(false);
+    this.setNextStatement(true, ['analysis', 'analysis_ref']);
   }
 };
 
 
 Blockly.Blocks['extra_semaphore'] = {
   init: function() {
+    this.setOutput(true, ['extra_semaphore']);
+
     this.setColour(330);
-    this.setOutput(true, ["extra_semaphore"]);
+    this.setInputsInline(false);
 
     this.appendValueInput('more dataflows')
         .appendSelector(['extra_semaphore', 'dataflow_rule']);
@@ -270,8 +282,7 @@ Blockly.Blocks['extra_semaphore'] = {
         .appendField(" branch #")
         .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number");
 
-    this.setNextStatement(true, ["analysis"]);
-    this.setInputsInline(false);
+    this.setNextStatement(true, ['analysis', 'analysis_ref']);
   }
 };
 
