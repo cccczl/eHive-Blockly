@@ -24,7 +24,7 @@ Blockly.PipeConfig['pipeline'] = function(block) {
 }
 
 
-Blockly.PipeConfig['dictionary2'] = function(block) {
+Blockly.PipeConfig['dictionary'] = function(block) {
 
     var dictionary = {};
 

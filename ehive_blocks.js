@@ -14,7 +14,7 @@ Blockly.Blocks['pipeline'] = {
         .appendField(new Blockly.FieldTextInput( this.default_name ), 'pipeline_name');
 
     this.appendValueInput('parameters')
-        .appendSelector(['dictionary2']);
+        .appendSelector(['dictionary']);
 
     this.appendDummyInput()
         .appendSelector(['analysis'], '↓', '⏚')
@@ -24,10 +24,10 @@ Blockly.Blocks['pipeline'] = {
 };
 
 
-Blockly.Blocks['dictionary2'] = {
+Blockly.Blocks['dictionary'] = {
   length: 0,
   init: function() {
-    this.setOutput(true, ['dictionary2']);
+    this.setOutput(true, ['dictionary']);
 
     this.setColour(20);
     this.setInputsInline(false);
@@ -88,13 +88,13 @@ Blockly.Blocks['analysis'] = {
         .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), 'module');
 
     this.appendValueInput('parameters')
-        .appendSelector(['dictionary2']);
+        .appendSelector(['dictionary']);
 
     this.appendValueInput('dataflows')
         .appendSelector(['extra_semaphore', 'dataflow_rule']);
 
     this.appendValueInput('template')
-        .appendSelector(['dictionary2']);
+        .appendSelector(['dictionary']);
 
     this.appendDummyInput()
         .appendSelector(['analysis', 'analysis_ref', 'table', 'accu', 'semaphored_dataflow'], '↓', '⏚')
@@ -205,7 +205,7 @@ Blockly.Blocks['dataflow_rule'] = {
         .appendField("Dataflow");
 
     this.appendValueInput('template')
-        .appendSelector(['dictionary2']);
+        .appendSelector(['dictionary']);
 
     this.appendDummyInput()
         .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'], '↓', '⏚')
@@ -268,7 +268,7 @@ Blockly.Blocks['extra_semaphore'] = {
         .appendField("Funnel");
 
     this.appendValueInput('template')
-        .appendSelector(['dictionary2']);
+        .appendSelector(['dictionary']);
 
     this.appendDummyInput()
         .appendSelector(['analysis','analysis_ref'], '↓', '⏚')
