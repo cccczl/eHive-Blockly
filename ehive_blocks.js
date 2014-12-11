@@ -18,7 +18,6 @@ Blockly.Blocks['pipeline'] = {
 
     this.appendDummyInput()
         .appendSelector(['analysis'], '↓', '⏚')
-    this.setNextStatement(true, ['analysis']);
 
     this.setDeletable(false);
   }
@@ -98,11 +97,8 @@ Blockly.Blocks['analysis'] = {
         .appendSelector(['dictionary2']);
 
     this.appendDummyInput()
-        .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'], '↓', '⏚')
+        .appendSelector(['analysis', 'analysis_ref', 'table', 'accu', 'semaphored_dataflow'], '↓', '⏚')
         .appendField(" branch #1");
-
-    this.setNextStatement(true, ['analysis', 'analysis_ref', 'accu', 'table', 'semaphored_dataflow']);
-
 
     this.onDrop = this.initValues;
   },
@@ -222,7 +218,6 @@ Blockly.Blocks['dataflow_rule'] = {
         .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
 */
 
-    this.setNextStatement(true, ['analysis', 'analysis_ref']);
   }
 };
 
@@ -247,8 +242,6 @@ Blockly.Blocks['semaphored_dataflow'] = {
     this.appendDummyInput()
         .appendSelector(['analysis','analysis_ref'], '↓', '⏚')
         .appendField(" branch #1");
-
-    this.setNextStatement(true, ['analysis', 'analysis_ref']);
   }
 };
 
@@ -281,8 +274,6 @@ Blockly.Blocks['extra_semaphore'] = {
         .appendSelector(['analysis','analysis_ref'], '↓', '⏚')
         .appendField(" branch #")
         .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number");
-
-    this.setNextStatement(true, ['analysis', 'analysis_ref']);
   }
 };
 

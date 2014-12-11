@@ -60,10 +60,19 @@ Blockly.Input.prototype.appendSelector = function(allowedBlocks, presenceLabel, 
         }
     }
 
+        // The following automagic checks assume your application follows
+        // a special convention for naming connection labels:
+        //      "Prev/Output" connection labels must be identical to the block.type .
+        //
+    if(this.type == Blockly.DUMMY_INPUT) {  // "verical" connection
+        this.sourceBlock_.setNextStatement(true, allowedBlocks);
+    } else {    // "horizontal" types of connection
+        this.setCheck(allowedBlocks);
+    }
+
     var this_input = this;
 
-    this//.setCheck(allowedBlocks)  // FIXME: we'll need to re-establish the connection rules somehow!
-        .setAlign( this.type == Blockly.INPUT_VALUE ? Blockly.ALIGN_RIGHT : Blockly.ALIGN_LEFT)
+    this.setAlign( this.type == Blockly.INPUT_VALUE ? Blockly.ALIGN_RIGHT : Blockly.ALIGN_LEFT)
         .appendField(new Blockly.FieldDropdown( dd_list, function(targetType) {
 
                     return this.sourceBlock_.toggleTargetBlock(this_input, targetType);
