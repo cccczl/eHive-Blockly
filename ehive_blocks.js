@@ -11,7 +11,7 @@ Blockly.Blocks['pipeline'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Pipeline")
-        .appendField(new Blockly.FieldTextInput( this.default_name ), "pipeline_name");
+        .appendField(new Blockly.FieldTextInput( this.default_name ), 'pipeline_name');
 
     this.appendValueInput('parameters')
         .appendSelector(['dictionary2']);
@@ -81,11 +81,11 @@ Blockly.Blocks['analysis'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Analysis")
-        .appendField(new Blockly.FieldTextInput( this.default_name ), "analysis_name");
+        .appendField(new Blockly.FieldTextInput( this.default_name ), 'analysis_name');
 
     this.appendDummyInput()
         .appendField("module:")
-        .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), "module");
+        .appendField(new Blockly.FieldTextInput( "Hive::RunnableDB::SystemCmd" ), 'module');
 
     this.appendValueInput('parameters')
         .appendSelector(['dictionary2']);
@@ -158,9 +158,9 @@ Blockly.Blocks['accu'] = {
 
     this.appendDummyInput()
         .appendField("instances of variable")
-        .appendField(new Blockly.FieldTextInput( this.default_name ), "struct_name")
+        .appendField(new Blockly.FieldTextInput( this.default_name ), 'struct_name')
         .appendField("as")
-        .appendField(new Blockly.FieldTextInput("[]"), "signature_template");
+        .appendField(new Blockly.FieldTextInput("[]"), 'signature_template');
 
     this.appendDummyInput()
         .appendField("⤶");
@@ -185,7 +185,7 @@ Blockly.Blocks['table'] = {
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_CENTRE)
         .appendField("Store in table")
-        .appendField(new Blockly.FieldTextInput( this.default_name ), "table_name");
+        .appendField(new Blockly.FieldTextInput( this.default_name ), 'table_name');
   }
 };
 
@@ -210,12 +210,12 @@ Blockly.Blocks['dataflow_rule'] = {
     this.appendDummyInput()
         .appendSelector(['analysis','analysis_ref','table','accu','semaphored_dataflow'], '↓', '⏚')
         .appendField(" branch #")
-        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
+        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), 'branch_number');
 
 /*
     this.appendDummyInput()
         .appendField(" ⇊  branch #")
-        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), "branch_number");
+        .appendField(new Blockly.FieldTextInput("2", Blockly.FieldTextInput.numberValidator), 'branch_number');
 */
 
   }
@@ -273,7 +273,7 @@ Blockly.Blocks['extra_semaphore'] = {
     this.appendDummyInput()
         .appendSelector(['analysis','analysis_ref'], '↓', '⏚')
         .appendField(" branch #")
-        .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), "branch_number");
+        .appendField(new Blockly.FieldTextInput("1", Blockly.FieldTextInput.numberValidator), 'branch_number');
   }
 };
 
