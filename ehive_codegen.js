@@ -78,7 +78,7 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
 
             if(funnelBlock && ( funnelBlock.type == 'analysis' || funnelBlock.type == 'analysis_ref' ) ) {  // not expecting anything else to stick
 
-                var dataflow_rule_obj = this.toDataflowObj(1, template, funnelBlock, true); // since it is the backbone, always treat the target as analysis_ref
+                var dataflow_rule_obj = this.toDataflowObj(null, template, funnelBlock, true); // since it is the backbone, always treat the target as analysis_ref
 
                 if(fan.length) {       // otherwise silently skip the semaphore altogether
                     dataflow_rule_obj.semaphore_fan = fan;
@@ -90,7 +90,7 @@ Blockly.PipeConfig['analysis'] = function(block) {          // vertical stack of
             nextBlock = funnelBlock;
 
         } else {    // any other autoflow rule
-            var dataflow_rule_obj = this.toDataflowObj(1, template, nextBlock, true);
+            var dataflow_rule_obj = this.toDataflowObj(null, template, nextBlock, true);
 
             dataflows.push( dataflow_rule_obj );
         }
@@ -147,8 +147,10 @@ Blockly.PipeConfig['dataflow_rule'] = function(block) {     // horizontal chain 
 
 Blockly.PipeConfig.toDataflowObj = function(branch_number, template, targetBlock, linkAnalyses) {
 
-    var dataflow_rule_obj = {
-        'branch_number'     : branch_number
+    var dataflow_rule_obj = {};
+
+    if(branch_number != null) {
+        dataflow_rule_obj['branch_number'] = branch_number;
     };
     if(template) { dataflow_rule_obj.template = template; }
 
