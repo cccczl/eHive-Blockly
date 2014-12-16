@@ -1,7 +1,7 @@
 'use strict';
 
 
-Blockly.PipeConfig = new Blockly.Generator('PipeConfig');
+Blockly.PipeConfig = {};
 
 
 Blockly.PipeConfig['pipeline'] = function(block) {
