@@ -16,19 +16,33 @@ Blockly.Data.Analyses = {
 
         var analysis_names = [];
 
-        // Iterate through every enabled block and add each analysis to the list
-        for (var x = 0; x < blocks_to_scan.length; x++) {
-            var block = blocks_to_scan[x];
-            if(! block.disabled) {
-                var func = block.getAnalysis;
-                if (func) {
-                    var analysis_name = func.call(block);
-                    analysis_names.push( analysis_name );
-                }
+        for (var i in blocks_to_scan) {
+            var block = blocks_to_scan[i];
+            var func = block.getAnalysis;
+            if (func) {
+                var analysis_name = func.call(block);
+                analysis_names.push( analysis_name );
             }
         }
 
         return analysis_names;
+    },
+
+    getNewName : function() {
+
+        var allNames = Blockly.Data.Analyses.getAllNames();
+        var namePattern = /^analysis_(\d+)$/;
+
+        for(var i in allNames) {
+            var aName = allNames[i];
+            if( aName.match(namePattern) ) {
+                var n = parseInt( aName.replace(namePattern, "$1") );
+                if( n > Blockly.Data.Analyses.counter ) {
+                    Blockly.Data.Analyses.counter = n;
+                }
+            }
+        }
+        return 'analysis_' + (++Blockly.Data.Analyses.counter);
     }
 }
 

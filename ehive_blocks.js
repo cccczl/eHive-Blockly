@@ -108,7 +108,7 @@ Blockly.Blocks['analysis'] = {
 
   initValues: function() {
     if((this.workspace == Blockly.getMainWorkspace()) && (this.getFieldValue('analysis_name') == this.default_name )) {
-        this.setFieldValue('analysis_' + (++Blockly.Data.Analyses.counter), 'analysis_name');   // unfortunately, the parameters were in the wrong order
+        this.setFieldValue( Blockly.Data.Analyses.getNewName(), 'analysis_name');   // API fault: counter-intuitive parameter order
     }
   },
 
@@ -141,7 +141,7 @@ Blockly.Blocks['analysis_ref'] = {
         dd_list.push( [ list_of_analyses[i], list_of_analyses[i] ] );
     }
 
-    return dd_list.length ? dd_list : [[ 'first_analysis', 'first_analysis']];  // the vanilla DDL doesn't support an empty list (crashes)
+    return dd_list.length ? dd_list : [[ 'analysis_1', 'analysis_1']];  // the vanilla DDL doesn't support an empty list (crashes)
   }
 };
 
